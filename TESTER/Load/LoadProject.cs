@@ -18,7 +18,7 @@ namespace TESTER
 
         Dictionary<string, int> _station = new Dictionary<string,int>();
         /// <summary>
-        /// станции сервера
+        /// станции сервера 5
         /// </summary>
         public Dictionary<string, int> Station { get { return _station; } }
         FileScript _test = new FileScript();
