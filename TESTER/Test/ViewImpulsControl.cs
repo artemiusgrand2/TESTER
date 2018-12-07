@@ -13,15 +13,18 @@ namespace TESTER
         /// <summary>
         /// Название импульса
         /// </summary>
-        public string Name_Impuls { get; set; }
+        public string Name { get; private set; }
         /// <summary>
         /// Значение импульса
         /// </summary>
-        public StateControl Value_Impuls { get; set; }
+        public StateControl State { get; set; }
 
-        public Impuls()
+        public TypeImpuls Type { get; private set; }
+
+        public Impuls(string name, TypeImpuls type)
         {
-            Name_Impuls = string.Empty;
+            Name = name;
+            Type = type;
         }
     }
 
@@ -49,4 +52,10 @@ namespace TESTER
     }
 
     public interface Script { }
+
+    public enum TypeImpuls
+    {
+        ts =0,
+        tu
+    }
 }

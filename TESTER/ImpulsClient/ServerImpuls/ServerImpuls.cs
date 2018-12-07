@@ -149,26 +149,29 @@ namespace TESTER
             return massiv_binary;
         }
 
-        public  byte[] Vihod_massiv_dann(List<int> StationNumber)
+        public  byte[] Vihod_massiv_dann(IList<int> stationsNumner)
         {
             //
-            List<byte> massiv_byte = new List<byte>();
-            foreach (int number in StationNumber)
+            var massiv_byte = new List<byte>();
+            foreach (int number in stationsNumner)
             {
                 try
                 {
-                    int index = 0;
+                    int indexOff = 0;
+                    int numberImpuls = 1;
                     //Формирование ответа по умолчанию когда все импульсы пасcивны
-                    byte[] massiv = Formirovanie_massiv_byte(number, CollectionStations[number].CollectionImpulses.Count, ref index);
-                    foreach (KeyValuePair<int, Impuls> value in CollectionStations[number].CollectionImpulses)
+                    byte[] massiv = Formirovanie_massiv_byte(number, CollectionStations[number].CollectionImpulses.Where(x=>x.Type == TypeImpuls.ts).ToList().Count, ref indexOff);
+                    foreach (var impuls in CollectionStations[number].CollectionImpulses.Where(x => x.Type == TypeImpuls.ts))
                     {
-                        int number_byte = value.Key / 4;
-                        int bit = value.Key % 4;
+                        int number_byte = numberImpuls / 4;
+                        int bit = numberImpuls % 4;
                         if (bit != 0)
                             number_byte++;
                         //
-                        byte answer_byte = (byte)Perevod_Binary(Preobrasovanie_massiva_binary(Perevod_Desatin((byte)massiv[index + number_byte]), bit, value.Value.Value_Impuls));
-                        massiv[index + number_byte] = answer_byte;
+                        byte answer_byte = (byte)Perevod_Binary(Preobrasovanie_massiva_binary(Perevod_Desatin((byte)massiv[indexOff + number_byte]), bit, impuls.State));
+                        massiv[indexOff + number_byte] = answer_byte;
+                        //
+                        numberImpuls++;
                     }
                     AddStatioByte(ref massiv_byte, massiv);
                 }

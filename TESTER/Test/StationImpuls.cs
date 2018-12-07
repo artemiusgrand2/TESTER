@@ -18,9 +18,9 @@ namespace TESTER
 
     public enum StateControl
     {
-        activ = 2,
-        pasiv = 1,
-        notconrol = 0
+        notconrol = 0,
+        activ = 1,
+        pasiv = 2,
     }
 
     class Stations
@@ -33,19 +33,19 @@ namespace TESTER
         /// все импульсы активны
         /// </summary>
         public string IsAllActive { get; set; }
-        private Dictionary<int, Impuls> _collectionImpulses = new Dictionary<int, Impuls>();
+        private IList<Impuls> collectionImpulses = new List<Impuls>();
         /// <summary>
-        /// коллекция управляющих импульсов
+        /// коллекция импульсов ТС/ТУ
         /// </summary>
-        public Dictionary<int, Impuls> CollectionImpulses
+        public IList<Impuls> CollectionImpulses
         {
             get
             {
-                return _collectionImpulses;
+                return collectionImpulses;
             }
             set
             {
-                _collectionImpulses = value;
+                collectionImpulses = value;
             }
         }
 

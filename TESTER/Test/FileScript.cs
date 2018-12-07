@@ -301,25 +301,25 @@ namespace TESTER
         {
             if (Server.Load.CollectionStations.ContainsKey(numberstation))
             {
-                foreach (KeyValuePair<int, Impuls> value in Server.Load.CollectionStations[numberstation].CollectionImpulses)
+                foreach (var impuls in Server.Load.CollectionStations[numberstation].CollectionImpulses)
                 {
-                    if (imp.Name_Impuls != ScriptTest.AllImp)
+                    if (imp.Name != ScriptTest.AllImp)
                     {
-                        if (value.Value.Name_Impuls == imp.Name_Impuls)
+                        if (impuls.Name == imp.Name)
                         {
-                            value.Value.Value_Impuls = imp.Value_Impuls;
-                            Server.Client.data.Stations[numberstation].TS.set_state(imp.Name_Impuls, GetState(imp.Value_Impuls), DateTime.Now);
+                            impuls.State = imp.State;
+                            Server.Client.data.Stations[numberstation].TS.set_state(imp.Name, GetState(imp.State), DateTime.Now);
                             if (UpdateState != null)
-                                UpdateState(numberstation, value.Value);
+                                UpdateState(numberstation, impuls);
                             return;
                         }
                     }
                     else
                     {
-                        value.Value.Value_Impuls = imp.Value_Impuls;
-                        Server.Client.data.Stations[numberstation].TS.set_state(imp.Name_Impuls, GetState(imp.Value_Impuls), DateTime.Now);
+                        impuls.State = imp.State;
+                        Server.Client.data.Stations[numberstation].TS.set_state(imp.Name, GetState(imp.State), DateTime.Now);
                         if (UpdateState != null)
-                            UpdateState(numberstation, value.Value);
+                            UpdateState(numberstation, impuls);
                     }
                 }
             }

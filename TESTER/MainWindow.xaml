@@ -40,7 +40,7 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Name="Column1"  />
+            <ColumnDefinition Name="Column1" Width="100*"  />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
@@ -71,11 +71,29 @@
             </WrapPanel>
         </ScrollViewer >
 
-        <ScrollViewer  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1" Background="{StaticResource SelectedBackgroundBrush}" >
+        <TabControl Grid.Row="1" Name="tabImpulses">
 
-            <WrapPanel   Name="panel_impuls" Orientation="Horizontal" MouseWheel="panel_impuls_MouseWheel" HorizontalAlignment="Center"  KeyDown="panel_impuls_KeyDown"   />
-          
-        </ScrollViewer>
+            <TabItem Header="Таблица ТС" >
+
+                <ScrollViewer  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="{StaticResource SelectedBackgroundBrush}" >
+
+                    <WrapPanel   Name="panelTS" Orientation="Horizontal" MouseWheel="panel_impuls_MouseWheel" HorizontalAlignment="Center"  KeyDown="panel_impuls_KeyDown"   />
+
+                </ScrollViewer>
+                
+            </TabItem>
+
+            <TabItem Header="Таблица ТУ">
+
+                <ScrollViewer  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="{StaticResource SelectedBackgroundBrush}" >
+
+                    <WrapPanel   Name="panelTU" Orientation="Horizontal" MouseWheel="panel_impuls_MouseWheel" HorizontalAlignment="Center"  KeyDown="panel_impuls_KeyDown"   />
+
+                </ScrollViewer>
+
+            </TabItem>
+
+        </TabControl>
 
 
         <GridSplitter  Width="5" Background="Silver" Grid.Row="1"  ShowsPreview="True"/>

@@ -87,7 +87,6 @@ namespace TESTER
             string avto = string.Empty;
             if (!IsAvto)
                 avto = NameState.sever;
-            int buffer = 0;
             try
             {
                 if (ConfigurationManager.AppSettings["file_impuls"] != null)
@@ -112,7 +111,7 @@ namespace TESTER
                                         //  string namestation =  GetNameStation(file_ts);
                                         if (!Collection.ContainsKey(stationInfo.Code))
                                         {
-                                            Dictionary<int, Impuls> impulses = GetImpulses(file_ts);
+                                            var impulses = GetImpulses(file_ts);
                                             if (impulses != null)
                                             {
                                                 Collection.Add(stationInfo.Code, new Stations() { CollectionImpulses = impulses, IsAllActive = avto, NameStation = stationInfo.Name });
@@ -156,26 +155,28 @@ namespace TESTER
         //    return string.Empty;
         //}
 
-        private static Dictionary<int, Impuls> GetImpulses(List<string> file)
+        private static IList<Impuls> GetImpulses(List<string> file)
         {
-            Dictionary<int, Impuls> ipm = new Dictionary<int, Impuls>();
+            var impulses = new List<Impuls>();
             try
             {
-                int number = 0;
                 foreach (string str in file)
                 {
                     string[] stroka = str.Split(new string[] { " '" }, StringSplitOptions.RemoveEmptyEntries);
-                    if ((stroka.Length > 1) && (stroka[0] == "@N"))
+                    if ((stroka.Length > 1))
                     {
-                        number++;
-                        int nameStartPos = str.IndexOf('\'', 0) + 1;
-                        ipm.Add(number, new Impuls() { Name_Impuls = str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), Value_Impuls = StateControl.notconrol });
+                        var nameStartPos = str.IndexOf('\'', 0) + 1;
+                        if (stroka[0] == "@N")
+                            impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.ts));
+                        else if (stroka[0] == "@U")
+                            impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.tu));
+
 
                     }
                 }
             }
             catch { return null; }
-            return ipm;
+            return impulses;
         }
     }
 }

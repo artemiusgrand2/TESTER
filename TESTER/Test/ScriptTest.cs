@@ -160,18 +160,18 @@ namespace TESTER
                                     {
                                         if ((Impulses[Impulses.Count - 1] is ImpulsGroup))
                                         {
-                                            (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls() { Name_Impuls = values[1].Trim(), Value_Impuls = GetState(metka) });
+                                            (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls(values[1].Trim(), TypeImpuls.ts) { State = GetState(metka) });
                                         }
                                         else
                                         {
                                             Impulses.Add(new ImpulsGroup());
-                                            (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls() { Name_Impuls = values[1].Trim(), Value_Impuls = GetState(metka) });
+                                            (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls(values[1].Trim(), TypeImpuls.ts) { State = GetState(metka) });
                                         }
                                     }
                                     else
                                     {
                                         Impulses.Add(new ImpulsGroup());
-                                        (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls() { Name_Impuls = values[1].Trim(), Value_Impuls = GetState(metka) });
+                                        (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls(values[1].Trim(), TypeImpuls.ts) {State = GetState(metka) });
                                     }
                                 }
                             }
@@ -190,8 +190,8 @@ namespace TESTER
                                 {
                                     if ((Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Count > 0)
                                     {
-                                        StateControl state = (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses[(Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Count - 1].Value_Impuls;
-                                        (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls() { Name_Impuls = values[0].Trim(), Value_Impuls = state });
+                                        StateControl state = (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses[(Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Count - 1].State;
+                                        (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls(values[0].Trim(), TypeImpuls.ts) {State = state });
                                     }
                                 }
                             }

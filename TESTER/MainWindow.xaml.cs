@@ -39,7 +39,7 @@ namespace TESTER
         /// <summary>
         /// коллекция импульсов станции
         /// </summary>
-        Dictionary<string, IList<Button>> m_collectionbuttons = new Dictionary<string, IList<Button>>();
+        Dictionary<string, IDictionary<TypeImpuls, IList<Button>>> m_collectionbuttons = new Dictionary<string, IDictionary<TypeImpuls, IList<Button>>>();
         /// <summary>
         /// текущая выбранная станция из коллекции
         /// </summary>
@@ -63,7 +63,7 @@ namespace TESTER
         /// <summary>
         /// тестовый сервер импульсов
         /// </summary>
-        Server _server;
+        Server server;
         /// <summary>
         /// таймер мигания кнопки подтверждения
         /// </summary>
@@ -120,7 +120,8 @@ namespace TESTER
             try
             {
  
-                panel_impuls.RenderTransform = scaletransform;
+                panelTS.RenderTransform = scaletransform;
+                panelTU.RenderTransform = scaletransform;
                 IsAutoWork = true;
                 _timer_mig = new System.Timers.Timer(500);
                 _timer_mig.Elapsed += timer_mig_tick;
@@ -132,16 +133,16 @@ namespace TESTER
                 //
                 ImpulsesClient.ConnectDisconnectionServer += ConnectCloseServer;
                 ImpulsesClient.NewData += NewInfomation;
-                _server = new Server(checkBox_work_view.IsChecked.Value); 
-                _server.Start();
-                FullStations(_server.Load.Station);
-                TableTest.ItemsSource = _server.Load.TestFile.Scripts;
-                _server.Load.TestFile.NewState += NewStateTest;
-                _server.Load.TestFile.NewNumberState += NewCurrentTest;
-                _server.Load.TestFile.UpdateState += UpdateColor;
-                _server.Load.TestFile.NameTest += GetNameTest;
-                _server.Load.TestFile.NotVisible += NotVisible;
-                _server.Load.TestFile.CurrentSecondWait += CurrentTimeWait;
+                server = new Server(checkBox_work_view.IsChecked.Value); 
+                server.Start();
+                FullStations(server.Load.Station);
+                TableTest.ItemsSource = server.Load.TestFile.Scripts;
+                server.Load.TestFile.NewState += NewStateTest;
+                server.Load.TestFile.NewNumberState += NewCurrentTest;
+                server.Load.TestFile.UpdateState += UpdateColor;
+                server.Load.TestFile.NameTest += GetNameTest;
+                server.Load.TestFile.NotVisible += NotVisible;
+                server.Load.TestFile.CurrentSecondWait += CurrentTimeWait;
                 _hook = new UserActivityHook();
                 _hook.KeyDown += new System.Windows.Forms.KeyEventHandler(MyKeyDown);
             }
@@ -258,19 +259,21 @@ namespace TESTER
                 //обрабатываем данные если мы работаем не автоматическом режиме
                 if (!checkBox_work_view.IsChecked.Value)
                 {
-                    foreach (KeyValuePair<int, Stations> value in _server.Load.CollectionStations)
+                    foreach (KeyValuePair<int, Stations> value in server.Load.CollectionStations)
                     {
                         if (value.Value.IsAllActive == NameState.sever)
                         {
-                            foreach (KeyValuePair<int, Impuls> impuls in value.Value.CollectionImpulses)
+                            foreach (var impuls in value.Value.CollectionImpulses.Where(x=>x.Type == TypeImpuls.ts))
                             {
-                                impuls.Value.Value_Impuls = GetState(value.Key, impuls.Value.Name_Impuls);
+                                impuls.State = GetState(value.Key, impuls.Name);
                                 if (_selectnumberstation == value.Key)
                                 {
-                                    if (m_collectionbuttons.ContainsKey(impuls.Value.Name_Impuls))
+                                    if (m_collectionbuttons.ContainsKey(impuls.Name))
                                     {
-                                       
-                                        SetState(m_collectionbuttons[impuls.Value.Name_Impuls]);
+                                        if (m_collectionbuttons[impuls.Name].ContainsKey(impuls.Type))
+                                        {
+                                            SetState(m_collectionbuttons[impuls.Name][impuls.Type]);
+                                        }
                                     }
                                 }
                             }
@@ -283,15 +286,18 @@ namespace TESTER
             catch { }
         }
 
-        private void UpdateColor(int station, Impuls impulse)
+        private void UpdateColor(int station, Impuls impuls)
         {
             Dispatcher.Invoke(new Action(() =>
                 {
-                    if (station == _selectnumberstation && impulse != null)
+                    if (station == _selectnumberstation && impuls != null)
                     {
-                        if (m_collectionbuttons.ContainsKey(impulse.Name_Impuls))
+                        if (m_collectionbuttons.ContainsKey(impuls.Name))
                         {
-                            SetState(m_collectionbuttons[impulse.Name_Impuls], impulse);
+                            if (m_collectionbuttons[impuls.Name].ContainsKey(impuls.Type))
+                            {
+                                SetState(m_collectionbuttons[impuls.Name][impuls.Type], impuls);
+                            }
                         }
                     }
                 }
@@ -304,7 +310,7 @@ namespace TESTER
             {
                 try
                 {
-                    switch (_server.Client.data.Stations[_selectnumberstation].TS.GetState(button.Content.ToString()))
+                    switch (server.Client.data.Stations[_selectnumberstation].TS.GetState(button.Content.ToString()))
                     {
                         case ImpulseState.ActiveState:
                             if (button.Background != m_activecolor)
@@ -334,7 +340,7 @@ namespace TESTER
             {
                 try
                 {
-                    switch (impulse.Value_Impuls)
+                    switch (impulse.State)
                     {
                         case StateControl.activ:
                             button.Background = m_activecolor;
@@ -377,7 +383,7 @@ namespace TESTER
         {
             try
             {
-                switch (_server.Client.data.Stations[station].TS.GetState(name))
+                switch (server.Client.data.Stations[station].TS.GetState(name))
                 {
                     case ImpulseState.ActiveState:
                         return StateControl.activ;
@@ -392,37 +398,37 @@ namespace TESTER
 
         private void AllImpulsesSetValue(StateControl state, int stationnumber, string control)
         {
-            if (_server.Load.CollectionStations.ContainsKey(stationnumber))
+            if (server.Load.CollectionStations.ContainsKey(stationnumber))
             {
-                foreach (KeyValuePair<int, Impuls> value in _server.Load.CollectionStations[stationnumber].CollectionImpulses)
+                foreach (var impuls in server.Load.CollectionStations[stationnumber].CollectionImpulses.Where(x=>x.Type == TypeImpuls.ts))
                 {
                     try
                     {
-                        value.Value.Value_Impuls = state;
-                        SetState(m_collectionbuttons[value.Value.Name_Impuls], value.Value);
+                        impuls.State = state;
+                        SetState(m_collectionbuttons[impuls.Name][impuls.Type], impuls);
                     }
                     catch { }
                 }
                 //
-                _server.Load.CollectionStations[stationnumber].IsAllActive = control;
+                server.Load.CollectionStations[stationnumber].IsAllActive = control;
             }
         }
 
         private void AllImpulsesSetValue(int stationnumber, string control)
         {
-            if (_server.Load.CollectionStations.ContainsKey(stationnumber))
+            if (server.Load.CollectionStations.ContainsKey(stationnumber))
             {
-                foreach (KeyValuePair<int, Impuls> value in _server.Load.CollectionStations[stationnumber].CollectionImpulses)
+                foreach (var impuls in server.Load.CollectionStations[stationnumber].CollectionImpulses.Where(x => x.Type == TypeImpuls.ts))
                 {
                     try
                     {
-                        value.Value.Value_Impuls = GetState(stationnumber, value.Value.Name_Impuls);
-                        SetState(m_collectionbuttons[value.Value.Name_Impuls]);
+                        impuls.State = GetState(stationnumber, impuls.Name);
+                        SetState(m_collectionbuttons[impuls.Name][impuls.Type]);
                     }
                     catch { }
                 }
                 //
-                _server.Load.CollectionStations[stationnumber].IsAllActive = control;
+                server.Load.CollectionStations[stationnumber].IsAllActive = control;
             }
         }
         /// <summary>
@@ -440,27 +446,27 @@ namespace TESTER
               
                 if (!ImpulsesClient.Connect)
                 {
-                    foreach (KeyValuePair<int, Stations> value in _server.Load.CollectionStations)
+                    foreach (KeyValuePair<int, Stations> value in server.Load.CollectionStations)
                     {
-                        if (_server.Client.data.Stations.ContainsKey(value.Key))
+                        if (server.Client.data.Stations.ContainsKey(value.Key))
                         {
-                            _server.Client.data.Stations[value.Key].TS.SetAllStatesInTable(ImpulseState.UncontrolledState, DateTime.Now);
-                            _server.Client.data.Stations[value.Key].TS.RealCountImpuls = 0;
-                            _server.Client.data.Stations[value.Key].TU.RealCountImpuls = 0;
+                            server.Client.data.Stations[value.Key].TS.SetAllStatesInTable(ImpulseState.UncontrolledState, DateTime.Now);
+                            server.Client.data.Stations[value.Key].TS.RealCountImpuls = 0;
+                            server.Client.data.Stations[value.Key].TU.RealCountImpuls = 0;
                         }
                         //
                         if (!checkBox_work_view.IsChecked.Value)
                         {
                             if (value.Value.IsAllActive == NameState.sever)
                             {
-                                foreach (KeyValuePair<int, Impuls> impuls in value.Value.CollectionImpulses)
+                                foreach (var impuls in value.Value.CollectionImpulses)
                                 {
-                                    impuls.Value.Value_Impuls = StateControl.notconrol;
+                                    impuls.State = StateControl.notconrol;
                                     if (_selectnumberstation == value.Key)
                                     {
-                                        if (m_collectionbuttons.ContainsKey(impuls.Value.Name_Impuls))
+                                        if (m_collectionbuttons.ContainsKey(impuls.Name))
                                         {
-                                            SetState(m_collectionbuttons[impuls.Value.Name_Impuls]);
+                                            SetState(m_collectionbuttons[impuls.Name][impuls.Type]);
                                         }
                                     }
                                 }
@@ -482,7 +488,7 @@ namespace TESTER
                 {
                     foreach (KeyValuePair<string, int> value in _stations)
                     {
-                        table.Add(new RowTable() { Name = value.Key, Station = value.Value, CountImpuls = _server.Load.CollectionStations[value.Value].CollectionImpulses.Count, NotcontrolCountImpuls = GetNotControl(_server.Load.CollectionStations[value.Value].CollectionImpulses) });
+                        table.Add(new RowTable() { Name = value.Key, Station = value.Value, CountImpuls = server.Load.CollectionStations[value.Value].CollectionImpulses.Count, NotcontrolCountImpuls = GetNotControl(server.Load.CollectionStations[value.Value].CollectionImpulses) });
                     }
                     if (table.Count > 0)
                         comboBox_stations.SelectedIndex = 0;
@@ -492,7 +498,7 @@ namespace TESTER
                     int index = 0;
                     foreach (KeyValuePair<string, int> value in _stations)
                     {
-                        table[index].NotcontrolCountImpuls = GetNotControl(_server.Load.CollectionStations[value.Value].CollectionImpulses);
+                        table[index].NotcontrolCountImpuls = GetNotControl(server.Load.CollectionStations[value.Value].CollectionImpulses);
                         index++;
                     }
                 }
@@ -504,19 +510,19 @@ namespace TESTER
             int count_notcontol = 0;
             foreach (var imp in impulses.Values)
             {
-                if (imp.Value_Impuls == StateControl.notconrol)
+                if (imp.State == StateControl.notconrol)
                     count_notcontol++;
             }
             //
             return string.Format("{0} - {1}", impulses.Values.Count, count_notcontol);
         }
 
-        private int GetNotControl(IDictionary<int, Impuls> impulses)
+        private int GetNotControl(IList<Impuls> impulses)
         {
             int count_notcontol = 0;
-            foreach (var imp in impulses.Values)
+            foreach (var imp in impulses.Where(x=>x.Type == TypeImpuls.ts).ToList())
             {
-                if (imp.Value_Impuls == StateControl.notconrol)
+                if (imp.State == StateControl.notconrol)
                     count_notcontol++;
             }
             //
@@ -539,57 +545,71 @@ namespace TESTER
         private void FullPanelImpulses(int stationnumber)
         {
             m_collectionbuttons.Clear();
-            panel_impuls.Children.Clear();
+            panelTS.Children.Clear();
+            panelTU.Children.Clear();
             double width = 75;
             try
             {
-                if (_server.Load.CollectionStations.ContainsKey(stationnumber))
+                if (!checkBox_work_view.IsChecked.Value)
+                    ShowInfoImpuls();
+                if (server.Load.CollectionStations.ContainsKey(stationnumber))
                 {
-                    foreach (KeyValuePair<int, Impuls> value in _server.Load.CollectionStations[stationnumber].CollectionImpulses)
+                    foreach (var impuls in server.Load.CollectionStations[stationnumber].CollectionImpulses)
                     {
                         Button button_impuls = new Button();
                         button_impuls.Height = 25;
                         button_impuls.Click += button_impuls_Click;
                         button_impuls.LostFocus += button_impuls_LostFocus;
                         button_impuls.GotFocus += button_impuls_GotFocus;
-                        button_impuls.Content = value.Value.Name_Impuls;
+                        button_impuls.Content = impuls.Name;
                         if (WidthText(button_impuls) > width)
                             width = WidthText(button_impuls);
-                        if (!checkBox_work_view.IsChecked.Value)
+                        if(impuls.Type == TypeImpuls.ts)
                         {
-                            ShowInfoImpuls();
-                            SetState(new List<Button>(){ button_impuls});
+                            if (!checkBox_work_view.IsChecked.Value)
+                                SetState(new List<Button>() { button_impuls });
+                            else
+                                SetState(new List<Button>() { button_impuls }, impuls);
                         }
                         else
-                            SetState(new List<Button>(){ button_impuls}, value.Value);
+                            button_impuls.Background = m_colornotcontrol;
                         //
-                        panel_impuls.Children.Add(button_impuls);
+                        if (impuls.Type == TypeImpuls.ts)
+                            panelTS.Children.Add(button_impuls);
+                        else
+                            panelTU.Children.Add(button_impuls);
                         //
-                        if (!m_collectionbuttons.ContainsKey(value.Value.Name_Impuls))
-                            m_collectionbuttons.Add(value.Value.Name_Impuls, new List<Button>() { button_impuls });
-                        else m_collectionbuttons[value.Value.Name_Impuls].Add(button_impuls);
+                        if (!m_collectionbuttons.ContainsKey(impuls.Name))
+                            m_collectionbuttons.Add(impuls.Name, new Dictionary<TypeImpuls, IList<Button>>());
+                        if (!m_collectionbuttons[impuls.Name].ContainsKey(impuls.Type))
+                            m_collectionbuttons[impuls.Name].Add(impuls.Type, new List<Button>());
+                         //
+                         m_collectionbuttons[impuls.Name][impuls.Type].Add(button_impuls);
                     }
                     //
-                    foreach (var buttonList in m_collectionbuttons)
+                    foreach (var typeImpuls in m_collectionbuttons)
                     {
-                        foreach (var button in buttonList.Value)
+                        foreach (var buttonList in typeImpuls.Value)
                         {
-                            button.Width = width;
+                            foreach (var button in buttonList.Value)
+                            {
+                                button.Width = width;
+                            }
                         }
                     }
                 }
             }
             catch (Exception error) { MessageBox.Show(error.Message); }
             //
-            comboBox_all_impuls.Text = _server.Load.CollectionStations[stationnumber].IsAllActive;
+            comboBox_all_impuls.Text = server.Load.CollectionStations[stationnumber].IsAllActive;
         }
 
         private void ShowInfoImpuls()
         {
-            if (_server.Client.data.Stations.ContainsKey(_selectnumberstation))
+            if (server.Client.data.Stations.ContainsKey(_selectnumberstation))
             {
-                Title = string.Format("Tестер (Количетво импульсов в проекте - {0}, Количетво импульсов полученных с сервера - {1})", _server.Client.data.Stations[_selectnumberstation].TS.GetCountProjectImpuls(),
-                    _server.Client.data.Stations[_selectnumberstation].TS.RealCountImpuls);
+                Title = string.Format("Tестер (Количетво импульсов в проекте - {0}, Количетво импульсов полученных с сервера - {1})", server.Client.data.Stations[_selectnumberstation].TS.GetCountProjectImpuls(),
+                    server.Client.data.Stations[_selectnumberstation].TS.RealCountImpuls);
             }
         }
 
@@ -604,19 +624,19 @@ namespace TESTER
             if (!string.IsNullOrEmpty(name))
             {
                 FindEl del = new FindEl(Find);
-                foreach (KeyValuePair<string, IList<Button>> impuls in m_collectionbuttons)
+                foreach (var impuls in m_collectionbuttons)
                 {
-
+                    var common = impuls.Value.Values.SelectMany(x => x).ToList();
                     if (/*(del.EndInvoke(del.BeginInvoke(impuls.Key.ToUpper(), name.ToUpper(), null, null))*/Find(impuls.Key.ToUpper(), name.ToUpper()))
                     {
-                        SelectButton(impuls.Value, true, IsShowOnlyResult.IsChecked.Value);
+                        SelectButton(common, true, IsShowOnlyResult.IsChecked.Value);
                         if (!_last_select.Contains(impuls.Key))
                             _last_select.Add(impuls.Key);
                         if (_last_select.Count == 1)
                             textBox_name_impuls.Foreground = Brushes.Green;
                     }
                     else
-                        SelectButton(impuls.Value, false, IsShowOnlyResult.IsChecked.Value);
+                        SelectButton(common, false, IsShowOnlyResult.IsChecked.Value);
                 }
                 //
                 if (_last_select.Count == 0)
@@ -712,9 +732,9 @@ namespace TESTER
         {
             if (isonly)
             {
-                foreach (KeyValuePair<string, IList<Button>> impuls in m_collectionbuttons)
+                foreach (var impuls in m_collectionbuttons)
                 {
-                    SelectButton(m_collectionbuttons[impuls.Key], true, IsShowOnlyResult.IsChecked.Value);
+                    SelectButton(m_collectionbuttons[impuls.Key].Values.SelectMany(x=>x).ToList(), true, IsShowOnlyResult.IsChecked.Value);
                 }
             }
             else
@@ -723,7 +743,7 @@ namespace TESTER
                 {
                     if (m_collectionbuttons.ContainsKey(impuls))
                     {
-                        SelectButton(m_collectionbuttons[impuls], false, IsShowOnlyResult.IsChecked.Value);
+                        SelectButton(m_collectionbuttons[impuls].Values.SelectMany(x => x).ToList(), false, IsShowOnlyResult.IsChecked.Value);
                     }
                 }
             }
@@ -787,11 +807,11 @@ namespace TESTER
             opendialog.Multiselect = false;
             if (opendialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                _server.Load.LoadTest(opendialog.FileName);
+                server.Load.LoadTest(opendialog.FileName);
                 TableTest.Items.Refresh();
             }
             //
-            if (_server.Load.TestFile.Scripts.Count > 0)
+            if (server.Load.TestFile.Scripts.Count > 0)
             {
                 panel_command.Visibility = System.Windows.Visibility.Visible;
                 TableTest.Visibility = System.Windows.Visibility.Visible;
@@ -820,7 +840,8 @@ namespace TESTER
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            panel_impuls.Width = e.NewSize.Width;
+            panelTS.Width = e.NewSize.Width;
+            panelTU.Width = e.NewSize.Width;
         }
 
         private void comboBox_stations_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -830,7 +851,7 @@ namespace TESTER
                 if (comboBox_stations.SelectedIndex != -1 && _selectstation != comboBox_stations.SelectedIndex)
                 {
                     _selectstation = comboBox_stations.SelectedIndex;
-                    if (_server.Load.CollectionStations.Count > 0)
+                    if (server.Load.CollectionStations.Count > 0)
                     {
                         _selectnumberstation = (comboBox_stations.SelectedItem as RowTable).Station;
                         FullPanelImpulses(_selectnumberstation);
@@ -847,71 +868,50 @@ namespace TESTER
             if (sender is Button)
             {
                 string name = (sender as Button).Content.ToString();
-                if(!IsShowOnlyResult.IsChecked.Value)
-                ClearLastSelect(/*name*/IsShowOnlyResult.IsChecked.Value);
-                if (checkBox_work_view.IsChecked.Value)
+                if(tabImpulses.SelectedIndex == 0)
                 {
-                    foreach (KeyValuePair<int, Impuls> value in _server.Load.CollectionStations[_selectnumberstation].CollectionImpulses)
+                    if (!IsShowOnlyResult.IsChecked.Value)
+                        ClearLastSelect(/*name*/IsShowOnlyResult.IsChecked.Value);
+                    if (checkBox_work_view.IsChecked.Value)
                     {
-                        if (value.Value.Name_Impuls == name)
+                        foreach (var impuls in server.Load.CollectionStations[_selectnumberstation].CollectionImpulses.Where(x=>x.Type== TypeImpuls.ts))
                         {
-                            //if (Keyboard.GetKeyStates(Key.LeftCtrl) == KeyStates.Down)
-                            //{
-                            //    if (value.Value.Value_Impuls != StateControl.notconrol)
-                            //    {
-                            //        (sender as Button).Background = _colornotcontrol;
-                            //        value.Value.Value_Impuls = StateControl.notconrol;
-                            //        _server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.UncontrolledState, DateTime.Now);
-                            //    }
-                            //}
-                            //else
-                            //{
-                                switch (value.Value.Value_Impuls)
+                            if (impuls.Name == name)
+                            {
+                                switch (impuls.State)
                                 {
                                     case StateControl.activ:
                                         {
                                             (sender as Button).Background = m_pasivecolor;
-                                            value.Value.Value_Impuls = StateControl.pasiv;
-                                            _server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.PassiveState, DateTime.Now);
+                                            impuls.State = StateControl.pasiv;
+                                            server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.PassiveState, DateTime.Now);
                                         }
                                         break;
                                     case StateControl.pasiv:
                                         {
                                             (sender as Button).Background = m_colornotcontrol;
-                                            value.Value.Value_Impuls = StateControl.notconrol;
-                                            _server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.UncontrolledState, DateTime.Now);
+                                            impuls.State = StateControl.notconrol;
+                                            server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.UncontrolledState, DateTime.Now);
                                         }
                                         break;
                                     case StateControl.notconrol:
                                         {
                                             (sender as Button).Background = m_activecolor;
-                                            value.Value.Value_Impuls = StateControl.activ;
-                                            _server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.ActiveState, DateTime.Now);
+                                            impuls.State = StateControl.activ;
+                                            server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.ActiveState, DateTime.Now);
                                         }
                                         break;
-                               // }
+                                        // }
+                                }
+                                //}
+                                return;
                             }
-                            //switch (value.Value.Value_Impuls)
-                            //{
-                            //    case StateControl.pasiv:
-                            //        (sender as Button).Background = _activecolor;
-                            //        value.Value.Value_Impuls = StateControl.activ;
-                            //        _server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.ActiveState, DateTime.Now);
-                            //        break;
-                            //    case StateControl.activ:
-                            //        (sender as Button).Background = _colornotcontrol;
-                            //        value.Value.Value_Impuls = StateControl.notconrol;
-                            //        _server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.UncontrolledState, DateTime.Now);
-                            //        break;
-                            //    default:
-                            //        (sender as Button).Background = _pasivecolor;
-                            //        value.Value.Value_Impuls = StateControl.pasiv;
-                            //        _server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.PassiveState, DateTime.Now);
-                            //        break;
-                            //}
-                            return;
                         }
                     }
+                }
+                else if (tabImpulses.SelectedIndex == 1)
+                {
+                    server.Client.SendImpulse(name, _selectnumberstation, ImpulseState.Execute);
                 }
             }
         }
@@ -919,12 +919,11 @@ namespace TESTER
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _hook.Stop();
-            _server.Stop();
+            server.Stop();
             _timer_mig.Stop();
-            _server.Load.TestFile.StopTest(string.Empty);
+            server.Load.TestFile.StopTest(string.Empty);
             ImpulsesClient.ConnectDisconnectionServer -= ConnectCloseServer;
             ImpulsesClient.NewData -= NewInfomation;
-
         }
 
         private void textBox_name_impuls_TextChanged(object sender, TextChangedEventArgs e)
@@ -950,7 +949,7 @@ namespace TESTER
             }
 
             comboBox_all_impuls.Text = answer;
-            foreach (KeyValuePair<int, Stations> value in _server.Load.CollectionStations)
+            foreach (KeyValuePair<int, Stations> value in server.Load.CollectionStations)
                 value.Value.IsAllActive = answer;
         }
 
@@ -1011,25 +1010,25 @@ namespace TESTER
                 if (IsCanStartTest())
                 {
                     MainContextMenu context = new MainContextMenu();
-                    TableTest.ContextMenu = context.GetContextMenu(_server.Load.TestFile, TableTest.SelectedIndex, TableTest, this);
+                    TableTest.ContextMenu = context.GetContextMenu(server.Load.TestFile, TableTest.SelectedIndex, TableTest, this);
                 }
             }
         }
 
         private void start_test_Click(object sender, RoutedEventArgs e)
         {
-            if (_server != null)
+            if (server != null)
             {
-                if (_server.Load.TestFile.IsStart)
+                if (server.Load.TestFile.IsStart)
                 {
                     start_test.Content = "Старт тест";
-                    _server.Load.TestFile.StopTest("Стоп тест");
+                    server.Load.TestFile.StopTest("Стоп тест");
                 }
                 else
                 {
                     if (IsCanStartTest())
                     {
-                        _server.Load.TestFile.StartTest(TableTest.SelectedIndex);
+                        server.Load.TestFile.StartTest(TableTest.SelectedIndex);
                         enter_test.Focus();
                         TableTest.Items.Refresh();
                         start_test.Content = "Cтоп тест";
@@ -1040,9 +1039,9 @@ namespace TESTER
 
         public void ClickStartStop()
         {
-            if (_server != null)
+            if (server != null)
             {
-                if (_server.Load.TestFile.IsStart)
+                if (server.Load.TestFile.IsStart)
                     start_test.Content = "Cтоп тест";
                 else
                     start_test.Content = "Старт тест";
@@ -1066,22 +1065,22 @@ namespace TESTER
 
         private void ClickEnter()
         {
-            if (_server != null && enter_test.Visibility == System.Windows.Visibility.Visible)
+            if (server != null && enter_test.Visibility == System.Windows.Visibility.Visible)
             {
-                _server.Load.TestFile.IsEnter = true;
+                server.Load.TestFile.IsEnter = true;
                 enter_test.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 
         private void IsShowOnlyResult_Click(object sender, RoutedEventArgs e)
         {
-            foreach (KeyValuePair<string, IList<Button>> impuls in m_collectionbuttons)
+            foreach (var impuls in m_collectionbuttons)
             {
                 if (_last_select.Contains(impuls.Key))
-                    SelectButton(impuls.Value, (IsShowOnlyResult.IsChecked.Value) ? false : true, false); 
+                    SelectButton(impuls.Value.Values.SelectMany(x => x).ToList(), (IsShowOnlyResult.IsChecked.Value) ? false : true, false); 
                 else
-                    SelectButton(impuls.Value, (IsShowOnlyResult.IsChecked.Value) ? false : true, true);
-                panel_impuls.UpdateLayout();
+                    SelectButton(impuls.Value.Values.SelectMany(x => x).ToList(), (IsShowOnlyResult.IsChecked.Value) ? false : true, true);
+                panelTS.UpdateLayout();
             }
         }
 
@@ -1111,7 +1110,7 @@ namespace TESTER
 
         private void comboBox_stations_DropDownOpened(object sender, EventArgs e)
         {
-            FullStations(_server.Load.Station);
+            FullStations(server.Load.Station);
         }
 
 
