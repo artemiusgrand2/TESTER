@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows;
 using sdm.diagnostic_section_model;
 using TESTER.Enums;
+using TESTER.Constants;
 
 namespace TESTER
 {
@@ -99,7 +100,7 @@ namespace TESTER
         {
             string avto = string.Empty;
             if (!IsAvto)
-                avto = NameState.sever;
+                avto = ProjectConstants.sever;
             try
             {
                 if (ConfigurationManager.AppSettings["file_impuls"] != null)

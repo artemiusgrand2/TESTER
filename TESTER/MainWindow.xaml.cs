@@ -19,6 +19,7 @@ using System.Xml.Serialization;
 using sdm.diagnostic_section_model;
 using sdm.diagnostic_section_model.client_impulses;
 using TESTER.Enums;
+using TESTER.Constants;
 
 namespace TESTER
 {
@@ -126,10 +127,10 @@ namespace TESTER
                 _timer_mig = new System.Timers.Timer(500);
                 _timer_mig.Elapsed += timer_mig_tick;
                 _timer_mig.Start();
-                comboBox_all_impuls.Items.Add(NameState.notcontrol);
-                comboBox_all_impuls.Items.Add(NameState.pasiv);
-                comboBox_all_impuls.Items.Add(NameState.activ);
-                comboBox_all_impuls.Items.Add(NameState.sever);
+                comboBox_all_impuls.Items.Add(ProjectConstants.notcontrol);
+                comboBox_all_impuls.Items.Add(ProjectConstants.pasiv);
+                comboBox_all_impuls.Items.Add(ProjectConstants.activ);
+                comboBox_all_impuls.Items.Add(ProjectConstants.sever);
                 //
                 ImpulsesClient.ConnectDisconnectionServer += ConnectCloseServer;
                 ImpulsesClient.NewData += NewInfomation;
@@ -261,7 +262,7 @@ namespace TESTER
                 {
                     foreach (KeyValuePair<int, Stations> value in server.Load.CollectionStations)
                     {
-                        if (value.Value.IsAllActive == NameState.sever)
+                        if (value.Value.IsAllActive == ProjectConstants.sever)
                         {
                             foreach (var impuls in value.Value.CollectionImpulses.Where(x=>x.Type == TypeImpuls.ts))
                             {
@@ -457,7 +458,7 @@ namespace TESTER
                         //
                         if (!checkBox_work_view.IsChecked.Value)
                         {
-                            if (value.Value.IsAllActive == NameState.sever)
+                            if (value.Value.IsAllActive == ProjectConstants.sever)
                             {
                                 foreach (var impuls in value.Value.CollectionImpulses)
                                 {
@@ -938,11 +939,11 @@ namespace TESTER
             string answer = string.Empty;
             IsAutoWork = checkBox_work_view.IsChecked.Value;
             if (checkBox_work_view.IsChecked.Value)
-                comboBox_all_impuls.Items.Remove(NameState.sever);
+                comboBox_all_impuls.Items.Remove(ProjectConstants.sever);
             else
             {
-                answer = NameState.sever;
-                comboBox_all_impuls.Items.Add(NameState.sever);
+                answer = ProjectConstants.sever;
+                comboBox_all_impuls.Items.Add(ProjectConstants.sever);
                 comboBox_all_impuls.Text = answer;
                 if (!ImpulsesClient.Connect)
                     ServerClose();
@@ -977,17 +978,17 @@ namespace TESTER
             {
                 switch (comboBox_all_impuls.SelectedItem.ToString())
                 {
-                    case NameState.activ:
-                        AllImpulsesSetValue(StateControl.activ, _selectnumberstation, NameState.activ);
+                    case ProjectConstants.activ:
+                        AllImpulsesSetValue(StateControl.activ, _selectnumberstation, ProjectConstants.activ);
                         break;
-                    case NameState.pasiv:
-                        AllImpulsesSetValue(StateControl.pasiv, _selectnumberstation, NameState.pasiv);
+                    case ProjectConstants.pasiv:
+                        AllImpulsesSetValue(StateControl.pasiv, _selectnumberstation, ProjectConstants.pasiv);
                         break;
-                    case NameState.notcontrol:
-                        AllImpulsesSetValue(StateControl.notconrol, _selectnumberstation, NameState.notcontrol);
+                    case ProjectConstants.notcontrol:
+                        AllImpulsesSetValue(StateControl.notconrol, _selectnumberstation, ProjectConstants.notcontrol);
                         break;
-                    case NameState.sever:
-                        AllImpulsesSetValue(_selectnumberstation, NameState.sever);
+                    case ProjectConstants.sever:
+                        AllImpulsesSetValue(_selectnumberstation, ProjectConstants.sever);
                         break;
                 }
             }

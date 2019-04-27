@@ -302,7 +302,6 @@ namespace sdm.diagnostic_section_model.client_impulses
                 throw new ArgumentNullException("path");
             DirectoryInfo info = null;
             FileInfo[] files = null;
-            string i = Path.Combine(path, String.Format("{0:D6}", station));
             info = new DirectoryInfo(Path.Combine(path, String.Format("{0:D6}", station)));
             if (!info.Exists)
                 throw new FileNotFoundException(string.Format("Directory {0} not found", info.FullName));
