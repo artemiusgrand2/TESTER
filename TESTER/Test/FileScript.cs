@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Timers;
 using sdm.diagnostic_section_model.client_impulses;
+using TESTER.Enums;
 
 namespace TESTER
 {

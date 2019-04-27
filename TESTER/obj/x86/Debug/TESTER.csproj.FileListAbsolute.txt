@@ -74,3 +74,5 @@ D:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.g.resources
 D:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.Properties.Resources.resources
 D:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.csproj.GenerateResource.Cache
 D:\Distributiv\TESTER\TESTER\bin\Debug\TESTER.pdb
+D:\Distributiv\TESTER\TESTER\obj\x86\Debug\Controls\TableTs.g.cs
+D:\Distributiv\TESTER\TESTER\obj\x86\Debug\Controls\TableTs.baml

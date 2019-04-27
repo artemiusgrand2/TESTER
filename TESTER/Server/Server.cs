@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Configuration;
 using System.Timers;
 using System.Net;
 using System.Net.Sockets;
@@ -31,6 +32,10 @@ namespace TESTER
         /// порт по умолчанию
         /// </summary>
         int port = 2002;
+        /// <summary>
+        /// интервал обновления данных
+        /// </summary>
+        int interval = 1000;
         ImpulsesClient _client;
         /// <summary>
         /// класс для работы с сервером импульсов
@@ -56,8 +61,14 @@ namespace TESTER
         public Server(bool IsAvto)
         {
             //подключение к импульс серверу
-            ServerConfiguration config = ServerConfiguration.FromFile(System.Configuration.ConfigurationManager.AppSettings["cfgpath"]); 
-            _client = new ImpulsesClient(config.Stations, System.Configuration.ConfigurationManager.AppSettings["server"], System.Configuration.ConfigurationManager.AppSettings["file_impuls"]);
+
+            ServerConfiguration config = ServerConfiguration.FromFile(ConfigurationManager.AppSettings["cfgpath"]);
+            try
+            {
+                interval = int.Parse(System.Configuration.ConfigurationManager.AppSettings["updateInterval"]);
+            }
+            catch { }
+            _client = new ImpulsesClient(config.Stations, ConfigurationManager.AppSettings["server"], System.Configuration.ConfigurationManager.AppSettings["file_impuls"], interval);
             _load = new LoadProject();
             _load.LoadImpuls(IsAvto, this, config.Stations);
         }
@@ -106,6 +117,7 @@ namespace TESTER
                 {
                     TcpClient client = server.AcceptTcpClient();
                     NetworkStream stream = client.GetStream();
+                    stream.ReadTimeout = 1000;
                     //размер скачаной информации
                     int lenread;
                     // читаю данные отклиента

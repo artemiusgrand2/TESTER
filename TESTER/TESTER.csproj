@@ -59,7 +59,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Ceneral.cs" />
+    <Compile Include="Constants\ProjectConstants.cs" />
+    <Compile Include="Controls\TableTs.xaml.cs">
+      <DependentUpon>TableTs.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\InfoStation.cs" />
+    <Compile Include="Enums\StateControl.cs" />
+    <Compile Include="Enums\TypeImpuls.cs" />
     <Compile Include="ImpulsClient\DataContainer.cs" />
     <Compile Include="ImpulsClient\FrameParser.cs" />
     <Compile Include="ImpulsClient\Impulse.cs" />
@@ -87,6 +93,9 @@
     <Compile Include="ImpulsClient\UniConnection.cs" />
     <Compile Include="ImpulsClient\UniConnectionException.cs" />
     <Compile Include="Load\LoadProject.cs" />
+    <Compile Include="Models\HeaderMenu.cs" />
+    <Compile Include="Models\RowModel.cs" />
+    <Compile Include="Models\TableItem.cs" />
     <Compile Include="RowTable.cs" />
     <Compile Include="Server\Server.cs" />
     <Compile Include="Test\CommandTU.cs" />
@@ -99,6 +108,10 @@
     <Compile Include="WpfForm\MessageForm.xaml.cs">
       <DependentUpon>MessageForm.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\TableTs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

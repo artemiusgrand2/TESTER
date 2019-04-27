@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
+using TESTER.Enums;
 
 namespace TESTER
 {
@@ -160,20 +161,23 @@ namespace TESTER
                     int indexOff = 0;
                     int numberImpuls = 1;
                     //Формирование ответа по умолчанию когда все импульсы пасcивны
-                    byte[] massiv = Formirovanie_massiv_byte(number, CollectionStations[number].CollectionImpulses.Where(x=>x.Type == TypeImpuls.ts).ToList().Count, ref indexOff);
-                    foreach (var impuls in CollectionStations[number].CollectionImpulses.Where(x => x.Type == TypeImpuls.ts))
+                    if (CollectionStations.ContainsKey(number))
                     {
-                        int number_byte = numberImpuls / 4;
-                        int bit = numberImpuls % 4;
-                        if (bit != 0)
-                            number_byte++;
-                        //
-                        byte answer_byte = (byte)Perevod_Binary(Preobrasovanie_massiva_binary(Perevod_Desatin((byte)massiv[indexOff + number_byte]), bit, impuls.State));
-                        massiv[indexOff + number_byte] = answer_byte;
-                        //
-                        numberImpuls++;
+                        byte[] massiv = Formirovanie_massiv_byte(number, CollectionStations[number].CollectionImpulses.Where(x => x.Type == TypeImpuls.ts).ToList().Count, ref indexOff);
+                        foreach (var impuls in CollectionStations[number].CollectionImpulses.Where(x => x.Type == TypeImpuls.ts))
+                        {
+                            int number_byte = numberImpuls / 4;
+                            int bit = numberImpuls % 4;
+                            if (bit != 0)
+                                number_byte++;
+                            //
+                            byte answer_byte = (byte)Perevod_Binary(Preobrasovanie_massiva_binary(Perevod_Desatin((byte)massiv[indexOff + number_byte]), bit, impuls.State));
+                            massiv[indexOff + number_byte] = answer_byte;
+                            //
+                            numberImpuls++;
+                        }
+                        AddStatioByte(ref massiv_byte, massiv);
                     }
-                    AddStatioByte(ref massiv_byte, massiv);
                 }
                 catch { }
             }

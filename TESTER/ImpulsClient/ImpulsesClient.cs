@@ -120,7 +120,7 @@ namespace sdm.diagnostic_section_model.client_impulses
 		/// <param name="configFileName">
 		/// A <see cref="System.String"/>
 		/// </param>
-        public ImpulsesClient(sdm.diagnostic_section_model.StationRecord[] inp_station_records, string server_address, string tables_path)
+        public ImpulsesClient(sdm.diagnostic_section_model.StationRecord[] inp_station_records, string server_address, string tables_path, int interval)
         {
 			m_data = new DataContainer();
             
@@ -129,8 +129,8 @@ namespace sdm.diagnostic_section_model.client_impulses
 			m_client = new UniConnection();
 			
 			m_data.LoadStationsData(inp_station_records, tables_path);
-            
 
+            this.interval = interval;
 			System.Console.WriteLine("Загружено {0} станций.", m_data.Stations.Count);
 //			DiagnosticManager.Instance.new_message_impulses_server(string.Format("Загружено {0} станций.", m_data.Stations.Count));
 			m_workTimer = new Timer(GetImpulsesTimerFunc);

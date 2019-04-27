@@ -6,6 +6,7 @@ using System.Configuration;
 using System.IO;
 using System.Windows;
 using sdm.diagnostic_section_model;
+using TESTER.Enums;
 
 namespace TESTER
 {
@@ -13,8 +14,6 @@ namespace TESTER
     {
 
         #region Переменные и свойства
-
-
 
         Dictionary<string, int> _station = new Dictionary<string,int>();
         /// <summary>
@@ -65,6 +64,20 @@ namespace TESTER
                 }
             }
             catch (Exception error) { MessageBox.Show(error.Message); }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        private void ParserTableFile(string file)
+        {
+            if (File.Exists(file))
+            {
+
+            }
+            else
+                MessageBox.Show(string.Format("Файл разбики по ячейкам по адресу - {0} не найден", file));
         }
 
         private bool IsStationCollection(int station)
@@ -166,16 +179,17 @@ namespace TESTER
                     if ((stroka.Length > 1))
                     {
                         var nameStartPos = str.IndexOf('\'', 0) + 1;
-                        if (stroka[0] == "@N")
-                            impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.ts));
-                        else if (stroka[0] == "@U")
-                            impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.tu));
-
-
+                        if(str.IndexOf('\'', nameStartPos) != -1)
+                        {
+                            if (stroka[0] == "@N")
+                                impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.ts));
+                            else if (stroka[0] == "@U")
+                                impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.tu));
+                        }
                     }
                 }
             }
-            catch { return null; }
+            catch { }
             return impulses;
         }
     }

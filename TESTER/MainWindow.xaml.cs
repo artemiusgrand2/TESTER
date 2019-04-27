@@ -18,6 +18,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using sdm.diagnostic_section_model;
 using sdm.diagnostic_section_model.client_impulses;
+using TESTER.Enums;
 
 namespace TESTER
 {
@@ -119,7 +120,6 @@ namespace TESTER
         {
             try
             {
- 
                 panelTS.RenderTransform = scaletransform;
                 panelTU.RenderTransform = scaletransform;
                 IsAutoWork = true;
@@ -848,7 +848,7 @@ namespace TESTER
         {
             try
             {
-                if (comboBox_stations.SelectedIndex != -1 && _selectstation != comboBox_stations.SelectedIndex)
+                if (comboBox_stations.SelectedIndex != -1 /*&& _selectstation != comboBox_stations.SelectedIndex*/)
                 {
                     _selectstation = comboBox_stations.SelectedIndex;
                     if (server.Load.CollectionStations.Count > 0)
@@ -889,9 +889,9 @@ namespace TESTER
                                         break;
                                     case StateControl.pasiv:
                                         {
-                                            (sender as Button).Background = m_colornotcontrol;
-                                            impuls.State = StateControl.notconrol;
-                                            server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.UncontrolledState, DateTime.Now);
+                                            (sender as Button).Background = m_activecolor;
+                                            impuls.State = StateControl.activ;
+                                            server.Client.data.Stations[_selectnumberstation].TS.set_state(name, ImpulseState.ActiveState, DateTime.Now);
                                         }
                                         break;
                                     case StateControl.notconrol:
