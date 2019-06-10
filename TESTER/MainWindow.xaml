@@ -47,7 +47,7 @@
             <WrapPanel  HorizontalAlignment="Left"  Name="panel_instrumnet" Background="Silver"   VerticalAlignment="Top"  Width="Auto" Height="Auto" >
 
                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Станция:" FontWeight="Bold" Margin="5,0,0,0"/>
-                <ComboBox Height="23" HorizontalAlignment="Left"  Name="comboBox_stations" VerticalAlignment="Center" Width="124" DropDownOpened="comboBox_stations_DropDownOpened"
+                <ComboBox Height="23" HorizontalAlignment="Left"  Name="comboBox_stations" VerticalAlignment="Center" Width="124"  MouseWheel="comboBox_stations_MouseWheel" DropDownOpened="comboBox_stations_DropDownOpened"
                           ItemsSource="{Binding  Path=Table, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Mode=TwoWay}" ItemTemplate="{StaticResource TableView}"
                           SelectionChanged="comboBox_stations_SelectionChanged" MaxDropDownHeight="Auto" Margin="5,0,0,0">
                 </ComboBox>

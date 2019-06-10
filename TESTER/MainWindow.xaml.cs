@@ -609,7 +609,7 @@ namespace TESTER
         {
             if (server.Client.data.Stations.ContainsKey(_selectnumberstation))
             {
-                Title = string.Format("Tестер (Количетво импульсов в проекте - {0}, Количетво импульсов полученных с сервера - {1})", server.Client.data.Stations[_selectnumberstation].TS.GetCountProjectImpuls(),
+                Title = string.Format("Tестер (Количество импульсов в проекте - {0}, Количество импульсов полученных с сервера - {1})", server.Client.data.Stations[_selectnumberstation].TS.GetCountProjectImpuls(),
                     server.Client.data.Stations[_selectnumberstation].TS.RealCountImpuls);
             }
         }
@@ -1073,6 +1073,21 @@ namespace TESTER
             }
         }
 
+        private void MoveForStation(int move)
+        {
+            if (move > 0 && _selectstation < comboBox_stations.Items.Count - 1)
+            {
+                _selectstation++;
+                comboBox_stations.SelectedIndex = _selectstation;
+
+            }
+            else if (move < 0 && _selectstation > 0)
+            {
+                _selectstation--;
+                comboBox_stations.SelectedIndex = _selectstation;
+            }
+        }
+
         private void IsShowOnlyResult_Click(object sender, RoutedEventArgs e)
         {
             foreach (var impuls in m_collectionbuttons)
@@ -1102,16 +1117,32 @@ namespace TESTER
 
         private void panel_impuls_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
+            switch (e.Key)
             {
-                 scaletransform.ScaleX = 1;
-                 scaletransform.ScaleY = 1;
+                case Key.Escape:
+                    {
+                        scaletransform.ScaleX = 1;
+                        scaletransform.ScaleY = 1;
+                    }
+                    break;
+                case Key.Up:
+                    {
+                        if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                            MoveForStation(-1);
+                    }
+                    break;
+                case Key.Down:
+                    {
+                        if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                            MoveForStation(1);
+                    }
+                    break;
             }
         }
 
         private void comboBox_stations_DropDownOpened(object sender, EventArgs e)
         {
-            FullStations(server.Load.Station);
+            //FullStations(server.Load.Station);
         }
 
 
@@ -1121,6 +1152,9 @@ namespace TESTER
             //    SelectItem();
         }
 
-
+        private void comboBox_stations_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            MoveForStation(e.Delta);
+        }
     }
 }
