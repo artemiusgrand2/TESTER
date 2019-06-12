@@ -1075,13 +1075,13 @@ namespace TESTER
 
         private void MoveForStation(int move)
         {
-            if (move > 0 && _selectstation < comboBox_stations.Items.Count - 1)
+            if (move <0 && _selectstation < comboBox_stations.Items.Count - 1)
             {
                 _selectstation++;
                 comboBox_stations.SelectedIndex = _selectstation;
 
             }
-            else if (move < 0 && _selectstation > 0)
+            else if (move > 0 && _selectstation > 0)
             {
                 _selectstation--;
                 comboBox_stations.SelectedIndex = _selectstation;
@@ -1128,13 +1128,13 @@ namespace TESTER
                 case Key.Up:
                     {
                         if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                            MoveForStation(-1);
+                            MoveForStation(1);
                     }
                     break;
                 case Key.Down:
                     {
                         if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                            MoveForStation(1);
+                            MoveForStation(-1);
                     }
                     break;
             }
