@@ -624,7 +624,6 @@ namespace TESTER
             ClearLastSelect(IsShowOnlyResult.IsChecked.Value);
             if (!string.IsNullOrEmpty(name))
             {
-                FindEl del = new FindEl(Find);
                 foreach (var impuls in m_collectionbuttons)
                 {
                     var common = impuls.Value.Values.SelectMany(x => x).ToList();
@@ -705,7 +704,9 @@ namespace TESTER
                             part_filter.Append(filter[i]);
                             if ((index = nameImpuls.IndexOf(part_filter.ToString(0, part_filter.Length), currentChar - part_filter.Length)) != -1)
                             {
-                                if ((currentChar - part_filter.Length) > index || (!currentStar && (index > currentChar -1)) /*)*/ )
+                                if (part_filter.Length - 1 == i)
+                                    continue;
+                                if ((currentChar - part_filter.Length) > index || (!currentStar && (index > currentChar - 1)) /*)*/ )
                                     return false;
                                 currentChar = index + part_filter.Length;
                                 //if (i == 0 && index != 0)
@@ -713,9 +714,11 @@ namespace TESTER
                                 //
                                 if (!isStar && countChar != currentChar)
                                     return false;
-                                if (((i == (filter.Length - 1)) && currentChar < nameImpuls.Length))
-                                    return false;
-
+                                if (i == (filter.Length - 1))
+                                {
+                                    if (currentChar < nameImpuls.Length)
+                                        return false;
+                                }
                             }
                             else
                                 return false;
