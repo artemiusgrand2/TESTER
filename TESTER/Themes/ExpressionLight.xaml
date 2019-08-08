@@ -18,6 +18,8 @@
     <Color x:Key="RedGradient1">#00FFFF00</Color>
     <Color x:Key="RedGradient2">#007FA000</Color>
     <converters:InfoStation x:Key="InfoStation"/>
+    <converters:VisibilityElement x:Key="VisibilityElement"/>
+    <converters:VisibilityMultiElement x:Key="VisibilityMultiElement"/>
     <Color x:Key="MainColor">#FF939393</Color>
     <Color x:Key="HoverColor">#FFAAAAAA</Color>
     <Color x:Key="DefaultColor">#FF9BB1C5</Color>
@@ -443,7 +445,16 @@
                             </Trigger.EnterActions>
 
                         </Trigger>
-                        <Trigger Property="IsChecked" Value="True"/>
+                      <Trigger Property="IsChecked" Value="True">
+
+                <Trigger.ExitActions>
+                    <BeginStoryboard x:Name="CheckedOn_BeginStoryboard1" Storyboard="{StaticResource CheckedOff}"/>
+                </Trigger.ExitActions>
+                <Trigger.EnterActions>
+                    <BeginStoryboard x:Name="CheckedOff_BeginStoryboard1" Storyboard="{StaticResource CheckedOn}"/>
+                </Trigger.EnterActions>
+
+            </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
 
                             <Trigger.ExitActions>

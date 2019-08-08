@@ -128,7 +128,7 @@ namespace TESTER
                                             var impulses = GetImpulses(file_ts);
                                             if (impulses != null)
                                             {
-                                                Collection.Add(stationInfo.Code, new Stations() { CollectionImpulses = impulses, IsAllActive = avto, NameStation = stationInfo.Name });
+                                                Collection.Add(stationInfo.Code, new Stations() { CollectionImpulses = impulses, NameStation = stationInfo.Name });
                                                 if (!_station.ContainsKey(stationInfo.Name))
                                                     _station.Add(stationInfo.Name, stationInfo.Code);
                                             }

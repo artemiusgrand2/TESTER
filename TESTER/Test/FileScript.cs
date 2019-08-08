@@ -434,7 +434,7 @@ namespace TESTER
 
         public void StartTest()
         {
-            if (!IsStart && MainWindow.IsAutoWork)
+            if (!IsStart && MainWindow.TypeWork == TypeWork.autonomy)
             {
                 try
                 {

@@ -9,10 +9,7 @@ namespace TESTER
         /// Название станции
         /// </summary>
         public string NameStation { get; set; }
-        /// <summary>
-        /// все импульсы активны
-        /// </summary>
-        public string IsAllActive { get; set; }
+
         private IList<Impuls> collectionImpulses = new List<Impuls>();
         /// <summary>
         /// коллекция импульсов ТС/ТУ
@@ -29,9 +26,5 @@ namespace TESTER
             }
         }
 
-        public Stations()
-        {
-            IsAllActive = string.Empty;
-        }
     }
 }

@@ -64,8 +64,11 @@
       <DependentUpon>TableTs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\InfoStation.cs" />
+    <Compile Include="Converters\VisibilityElement.cs" />
+    <Compile Include="Converters\VisibilityMultiElement.cs" />
     <Compile Include="Enums\StateControl.cs" />
     <Compile Include="Enums\TypeImpuls.cs" />
+    <Compile Include="Enums\TypeWork.cs" />
     <Compile Include="ImpulsClient\DataContainer.cs" />
     <Compile Include="ImpulsClient\FrameParser.cs" />
     <Compile Include="ImpulsClient\Impulse.cs" />
@@ -93,6 +96,7 @@
     <Compile Include="ImpulsClient\UniConnection.cs" />
     <Compile Include="ImpulsClient\UniConnectionException.cs" />
     <Compile Include="Load\LoadProject.cs" />
+    <Compile Include="Models\DataStationView.cs" />
     <Compile Include="Models\HeaderMenu.cs" />
     <Compile Include="Models\RowModel.cs" />
     <Compile Include="Models\TableItem.cs" />
