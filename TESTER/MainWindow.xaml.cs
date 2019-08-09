@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
@@ -79,7 +80,7 @@ namespace TESTER
         /// <summary>
         /// результат последнего запроса
         /// </summary>
-        private List<string> _last_select = new List<string>();
+        private List<string> last_select = new List<string>();
         /// <summary>
         /// основное отрицательное изменение масштаба 
         /// </summary>
@@ -194,10 +195,14 @@ namespace TESTER
                 _hook = new UserActivityHook();
                 _hook.KeyDown += new System.Windows.Forms.KeyEventHandler(MyKeyDown);
                 //
+                IsDifferences = App.IsDifferences;
+                textBox_name_impuls.Text = App.Filter;
+                if (!string.IsNullOrEmpty(App.Filter))
+                {
+                    IsShowFindResult = true;
+                }
                 if (App.StationsNumber.Count > 0)
                 {
-                    //
-                    IsDifferences = true;
                     switch (App.StationsNumber.Count)
                     {
                         case 2:
@@ -379,9 +384,12 @@ namespace TESTER
                     }
                 }
                 //
-                if (!IsRunDifferences && App.StationsNumber.Count > 0)
+                if (!IsRunDifferences && (isDifferences || IsShowFindResult))
                 {
-                    FindDifferences();
+                    if (IsDifferences)
+                        FindDifferences();
+                    if (IsShowFindResult)
+                        IsShowOnlyFunction();
                     IsRunDifferences = !IsRunDifferences;
                 }
                 //
@@ -695,112 +703,35 @@ namespace TESTER
             ClearLastSelect(IsShowFindResult);
             if (!string.IsNullOrEmpty(name))
             {
-                foreach (var impuls in panels.SelectMany(x=>x.Collectionbuttons))
+                try
                 {
-                    var common = impuls.Value.Values.SelectMany(x => x).ToList();
-                    if (/*(del.EndInvoke(del.BeginInvoke(impuls.Key.ToUpper(), name.ToUpper(), null, null))*/Find(impuls.Key.ToUpper(), name.ToUpper()))
+                    foreach (var impuls in panels.SelectMany(x => x.Collectionbuttons))
                     {
-                        SelectButton(common, true, IsShowFindResult);
-                        if (!_last_select.Contains(impuls.Key))
-                            _last_select.Add(impuls.Key);
-                        if (_last_select.Count == 1)
-                            textBox_name_impuls.Foreground = Brushes.Green;
+                        var common = impuls.Value.Values.SelectMany(x => x).ToList();
+                        if (/*(del.EndInvoke(del.BeginInvoke(impuls.Key.ToUpper(), name.ToUpper(), null, null))*/Helps.Find(impuls.Key.ToUpper(), name.ToUpper()))
+                        {
+                            if (common.Where(x => x.Visibility == Visibility.Visible).Count() != common.Count)
+                                continue;
+                            SelectButton(common, true, IsShowFindResult);
+                            if (!last_select.Contains(impuls.Key))
+                                last_select.Add(impuls.Key);
+                            if (last_select.Count == 1)
+                                textBox_name_impuls.Foreground = Brushes.Green;
+                        }
+                        else
+                            SelectButton(common, false, IsShowFindResult);
                     }
-                    else
-                        SelectButton(common, false, IsShowFindResult);
                 }
+                catch (ArgumentException){ }
                 //
-                if (_last_select.Count == 0)
+                if (last_select.Count == 0)
                     textBox_name_impuls.Foreground = Brushes.Red;
             }
             //
             if (name.Length > 0)
-                CountFindElement.Text = _last_select.Count.ToString();
+                CountFindElement.Text = last_select.Count.ToString();
             textBox_name_impuls.Focus();
            
-        }
-
-        private bool Find(string nameImpuls, string filter)
-        {
-            string[] filters = filter.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string f in filters)
-            {
-                if (FindElement(nameImpuls, f))
-                    return true;
-            }
-            //
-            return false;
-        }
-
-        private bool FindElement(string nameImpuls, string filter)
-        {
-            //nameImpuls = "1-2048";
-            //filter = "*?48";
-            StringBuilder part_filter = new StringBuilder(string.Empty);
-            int currentChar = 0;
-            int countChar = 0;
-            bool currentStar = false;
-            bool isStar = false;
-            //
-            int index = -1;
-            for (int i = 0; i < filter.Length; i++)
-            {
-                if (filter[i] != '*')
-                {
-                    currentChar++;
-                    countChar++;
-                }
-                //
-                switch (filter[i])
-                {
-                    case '*':
-                        {
-                            currentStar = true;
-                            isStar = true;
-                            part_filter.Clear();
-                        }
-                        break;
-                    case '?':
-                        {
-                            part_filter.Clear();
-                            if ((!isStar && countChar != currentChar) || currentChar > nameImpuls.Length)
-                                return false;
-                            if (((i == (filter.Length - 1)) && currentChar < nameImpuls.Length))
-                                return false;
-                        }
-                        break;
-                    default:
-                        {
-                            index = -1;
-                            part_filter.Append(filter[i]);
-                            if ((index = nameImpuls.IndexOf(part_filter.ToString(0, part_filter.Length), currentChar - part_filter.Length)) != -1)
-                            {
-                                if (part_filter.Length - 1 == i)
-                                    continue;
-                                if ((currentChar - part_filter.Length) > index || (!currentStar && (index > currentChar - 1)) /*)*/ )
-                                    return false;
-                                currentChar = index + part_filter.Length;
-                                //if (i == 0 && index != 0)
-                                //    return false;
-                                //
-                                if (!isStar && countChar != currentChar)
-                                    return false;
-                                if (i == (filter.Length - 1))
-                                {
-                                    if (currentChar < nameImpuls.Length)
-                                        return false;
-                                }
-                            }
-                            else
-                                return false;
-                            //
-                            currentStar = false;
-                        }
-                        break;
-                }
-            }
-            //
-            return true;
         }
 
         private void ClearLastSelect(bool isonly)
@@ -819,7 +750,7 @@ namespace TESTER
             {
                 panels.Where(x => x.IsShow).ToList().ForEach(x =>
                 {
-                    foreach (string impuls in _last_select)
+                    foreach (string impuls in last_select)
                     {
                         if (x.Collectionbuttons.ContainsKey(impuls))
                         {
@@ -828,7 +759,7 @@ namespace TESTER
                     }
                 });
             }
-            _last_select.Clear();
+            last_select.Clear();
             CountFindElement.Text = string.Empty;
         }
 
@@ -886,7 +817,7 @@ namespace TESTER
         {
             if (IsDifferences)
             {
-                var stationsModel = panels.Where(x => x.IsShow).ToList(); ;
+                var stationsModel = panels.Where(x => x.IsShow && x.CurrentStation != -1).ToList();
                 var maxTS = stationsModel.Max(x => x.Collectionbuttons.Count);
                 var stationModel = stationsModel.Where(x => x.Collectionbuttons.Count == maxTS).FirstOrDefault();
                 var stationsNumber = stationsModel.Select(x => x.CurrentStation).Distinct().ToList();
@@ -912,7 +843,6 @@ namespace TESTER
                                     y.SetVisiblity(impulses[index], Visibility.Collapsed);
                                 });
                         });
-
                     }
                     else
                     {
@@ -931,9 +861,7 @@ namespace TESTER
                 stationsModel.ForEach(x => x.Panel.UpdateLayout());
             }
             else
-            {
                 IsShowOnlyFunction();
-            }
         }
 
         private bool IsCanStartTest()
@@ -973,9 +901,8 @@ namespace TESTER
                         var selectPanel = (comboxElement.Name.IndexOf("1") != -1) ? panel1 : (comboxElement.Name.IndexOf("2") != -1) ? panel2 :
                                           (comboxElement.Name.IndexOf("3") != -1) ? panel3 : (comboxElement.Name.IndexOf("4") != -1) ? panel4 : null;
                         FullPanelImpulses(selectStation, panels.Where(x => x.Panel == selectPanel).FirstOrDefault());
-                        _last_select.Clear();
+                        last_select.Clear();
                         FindImpuls(textBox_name_impuls.Text);
-                        FindDifferences();
                     }
                 }
             }
@@ -1218,7 +1145,7 @@ namespace TESTER
             {
                 foreach (var impuls in x.Collectionbuttons)
                 {
-                    if (_last_select.Contains(impuls.Key))
+                    if (last_select.Contains(impuls.Key))
                         SelectButton(impuls.Value.Values.SelectMany(y => y).ToList(), (IsShowFindResult) ? false : true, false);
                     else
                         SelectButton(impuls.Value.Values.SelectMany(y => y).ToList(), (IsShowFindResult) ? false : true, true);
@@ -1230,6 +1157,8 @@ namespace TESTER
 
         private void IsShowOnlyResult_Click(object sender, RoutedEventArgs e)
         {
+            if (!(sender as CheckBox).IsChecked.Value)
+                IsDifferences = false;
             IsShowOnlyFunction();
         }
 
@@ -1329,6 +1258,8 @@ namespace TESTER
 
         private void DifferencesCheckBox_Click(object sender, RoutedEventArgs e)
         {
+            if ((sender as CheckBox).IsChecked.Value)
+                IsShowFindResult = false;
             FindDifferences();
         }
 
@@ -1339,5 +1270,6 @@ namespace TESTER
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 }

@@ -12,40 +12,49 @@ namespace TESTER
     /// </summary>
     public partial class App : Application
     {
-        public static bool Close = false;
+        public static bool Close { get; private set; } = false;
 
-        public static IList<int> StationsNumber = new List<int>();
+        public static IList<int> StationsNumber { get; private set; } = new List<int>();
+
+        public static bool IsDifferences { get; private set; } = false;
+
+        public static string Filter { get; private set; } = string.Empty;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             if (e.Args.Length > 0)
             {
-                if(e.Args[0] == "-d")
+                int buffer;
+                foreach(var arg in e.Args)
                 {
-                    if((e.Args.Length -1) == 2 || (e.Args.Length - 1) == 4)
+                    if (arg == "-d")
                     {
-                        int buffer;
-                        for (var i = 1; i < e.Args.Length; i++)
-                        {
-                            if(int.TryParse(e.Args[i], out buffer))
-                            {
-                                StationsNumber.Add(buffer);
-                            }
-                            else
-                            {
-                                MessageBox.Show(string.Format("Номер станции {0} имеет неверный формат", e.Args[i]), "", MessageBoxButton.OK, MessageBoxImage.Information);
-                                Close = true;
-                                Shutdown();
-                            }
-                        }
+                        IsDifferences = true;
+                        continue;
+                    }
+                    if (arg.IndexOf("-r=") != -1)
+                    {
+                        Filter = arg.Replace("-r=", string.Empty);
+                        continue;
+                    }
+                    //
+                    if (int.TryParse(arg, out buffer))
+                    {
+                        StationsNumber.Add(buffer);
                     }
                     else
                     {
-                        MessageBox.Show("Количество станций должно быть 2 или 4", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show(string.Format("Номер станции {0} имеет неверный формат", arg), "", MessageBoxButton.OK, MessageBoxImage.Information);
                         Close = true;
                         Shutdown();
                     }
-
+                }
+                //
+                if(!(StationsNumber.Count ==2 || StationsNumber.Count == 4))
+                {
+                    MessageBox.Show("Количество станций должно быть 2 или 4", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close = true;
+                    Shutdown();
                 }
             }
         }
