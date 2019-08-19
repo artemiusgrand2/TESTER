@@ -95,12 +95,30 @@ namespace sdm.diagnostic_section_model.client_impulses
 		/// </summary>
 		private static bool m_closed;
 
-		/// <summary>
-		/// Адрес сервера импульсов.
+        /// <summary>
+		/// перезагрузка подключения
 		/// </summary>
-		private string m_connectionString;
+		private static bool m_restart;
 
-	    public static void Set_new_state_from_user()
+        /// <summary>
+        /// Адрес сервера импульсов.
+        /// </summary>
+        private string m_connectionString;
+
+
+        public string ConnectionString
+        {
+            get
+            {
+                return m_connectionString;
+            }
+            set
+            {
+                m_connectionString = value;
+            }
+        }
+
+        public static void Set_new_state_from_user()
 	    {
 			//if(m_closed)
 	            if (NewData != null)
@@ -133,7 +151,7 @@ namespace sdm.diagnostic_section_model.client_impulses
             this.interval = interval;
 			System.Console.WriteLine("Загружено {0} станций.", m_data.Stations.Count);
 //			DiagnosticManager.Instance.new_message_impulses_server(string.Format("Загружено {0} станций.", m_data.Stations.Count));
-			m_workTimer = new Timer(GetImpulsesTimerFunc);
+			
 		}
 
 		/// <summary>
@@ -163,11 +181,19 @@ namespace sdm.diagnostic_section_model.client_impulses
 		/// <summary>
 		/// Кнопка стоп ! Почему-то тоже красненькая !
 		/// </summary>
+		public void Restart()
+        {
+			m_restart = true;
+		}
+
+        /// <summary>
+		/// Кнопка перезапуска
+		/// </summary>
 		public void Stop()
         {
-			m_closed = true;
-		}
-		
+            m_closed = true;
+        }
+
         /// <summary>
         /// Запуск работы.
         /// </summary>
@@ -213,9 +239,9 @@ namespace sdm.diagnostic_section_model.client_impulses
 			Console.WriteLine("Request for {0} stations size={1}", count_st, m_impulsesRequest.Length);
 
             m_impulsesRequest = FrameParser.MakeFrame(m_impulsesRequest, false);
-            
-			
-			m_workTimer.Change(0, interval);
+
+            m_workTimer = new Timer(GetImpulsesTimerFunc);
+            m_workTimer.Change(0, interval);
         }
 
         protected void OnGetNewData()
@@ -249,6 +275,8 @@ namespace sdm.diagnostic_section_model.client_impulses
 				}
 				
 				m_isTimerInWork = true;
+
+             
 				
 				if(m_closed || p_closed)
 				{
@@ -257,14 +285,22 @@ namespace sdm.diagnostic_section_model.client_impulses
 					//m_workTimer = null;
 					System.Console.WriteLine("Конец получения данных с сервера.");
 				    _stateDescription = "Клиент завершил работу";
-                    Set_changing_state();
+                   // Set_changing_state();
 //					DiagnosticManager.Instance.new_message_impulses_server("Конец получения данных с сервера.");
 					m_isTimerInWork = false;
 					return;
 				}
-				
-				//если потерял связь с сервером, то надо заново соединятся
-				if(!m_client.IsOpen)
+
+                if (m_restart)
+                {
+
+                    m_client.Close();
+                    System.Threading.Thread.Sleep(100);
+                    m_restart = false;
+                }
+
+                //если потерял связь с сервером, то надо заново соединятся
+                if (!m_client.IsOpen)
 				{
                     try
                     {
@@ -281,9 +317,9 @@ namespace sdm.diagnostic_section_model.client_impulses
                         _stateDescription = string.Format("Соединение с {0} установлено", m_connectionString);
                         Set_changing_state();
                     }
-                    catch(Exception error)
+                    catch (Exception error)
                     {
-                        if (_firstconnect)
+                         if (_firstconnect)
                         {
                             Connect = false;
                             _firstconnect = false;
@@ -300,7 +336,7 @@ namespace sdm.diagnostic_section_model.client_impulses
                             }
                         }
                     }
-				}
+                }
 	
 				//читаю данные
 				if(m_client.IsOpen)

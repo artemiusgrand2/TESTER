@@ -52,7 +52,8 @@
 
                     <ComboBox HorizontalAlignment="Left" VerticalAlignment="Center" Name="comboBox_all_impuls" Width="150"  SelectionChanged="comboBox_all_impuls_SelectionChanged"  Margin="5,0,0,0"  />
                     <CheckBox Content="Автономная работа" HorizontalAlignment="Left"  Name="checkBox_work_view" FontWeight="Bold"  Height="16" VerticalAlignment="Center"  Click="checkBox_work_view_Click" Margin="5,0,0,0" />
-
+                    <CheckBox Content="Резерв" HorizontalAlignment="Left"  Name="checkBox_reserve" FontWeight="Bold"  Height="16" VerticalAlignment="Center"   Click="checkBox_reserve_Click" Margin="5,0,0,0" />
+                    
                     <GridSplitter  Width="5" Background="Brown"  BorderBrush="LightGreen" Margin="5,0,0,0"/>
                     <Button Content="Загрузить" Height="23" HorizontalAlignment="Left"  Name="button_load_test" VerticalAlignment="Center"  Width="75" FontWeight="Bold" Click="button_load_test_Click" Margin="5,0,0,0" />
                     <WrapPanel Name="panel_current_test" Visibility="Collapsed" Margin="5,0,0,0">
@@ -230,8 +231,8 @@
         
         </Grid>
         
-        <StatusBar Grid.Row="2" Height="23" Grid.ColumnSpan="2"  Name="statusBar_test" VerticalAlignment="Bottom" Background="{StaticResource SelectedBackgroundBrush}"  >
-            <StatusBarItem  Name="info_status_test" BorderBrush="Brown" BorderThickness="2"/>
+        <StatusBar Grid.Row="2" Height="25" Grid.ColumnSpan="2"  Name="statusBar_test" VerticalAlignment="Bottom" Background="{StaticResource SelectedBackgroundBrush}"  >
+            <StatusBarItem  Name="info_status_test" BorderBrush="Brown" FontWeight="Bold"  HorizontalContentAlignment="Right" BorderThickness="2"/>
         </StatusBar>
     </Grid>
 </Window>

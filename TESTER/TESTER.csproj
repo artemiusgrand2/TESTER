@@ -100,7 +100,6 @@
     <Compile Include="Models\DataStationView.cs" />
     <Compile Include="Models\HeaderMenu.cs" />
     <Compile Include="Models\RowModel.cs" />
-    <Compile Include="Models\TableItem.cs" />
     <Compile Include="RowTable.cs" />
     <Compile Include="Server\Server.cs" />
     <Compile Include="Test\CommandTU.cs" />
@@ -181,7 +180,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="App.config">
+    <None Include="App1.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\Settings.settings">

@@ -103,9 +103,9 @@ namespace TESTER
                 avto = ProjectConstants.sever;
             try
             {
-                if (ConfigurationManager.AppSettings["file_impuls"] != null)
+                if (App.Config.AppSettings.Settings["file_impuls"].Value != null)
                 {
-                    DirectoryInfo info = new DirectoryInfo(ConfigurationManager.AppSettings["file_impuls"]);
+                    DirectoryInfo info = new DirectoryInfo(App.Config.AppSettings.Settings["file_impuls"].Value);
                     if (info.Exists)
                     {
                         foreach (StationRecord stationInfo in inp_station_records)
@@ -142,7 +142,7 @@ namespace TESTER
                             }
                         }
                     }
-                    else System.Windows.MessageBox.Show(string.Format("Папки {0} не существует !!!", ConfigurationManager.AppSettings["file_impuls"]));
+                    else System.Windows.MessageBox.Show(string.Format("Папки {0} не существует !!!", App.Config.AppSettings.Settings["file_impuls"].Value));
                 }
             }
             catch { }

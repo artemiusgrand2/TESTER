@@ -49,7 +49,6 @@ C:\Users\Артем\Documents\Visual Studio 2012\Projects\TESTER\TESTER\obj\x86\
 C:\Users\Артем\Documents\Visual Studio 2012\Projects\TESTER\TESTER\obj\x86\Debug\TESTER.g.resources
 C:\Users\Артем\Documents\Visual Studio 2012\Projects\TESTER\TESTER\obj\x86\Debug\TESTER.Properties.Resources.resources
 C:\Users\Артем\Documents\Visual Studio 2012\Projects\TESTER\TESTER\obj\x86\Debug\TESTER.csproj.GenerateResource.Cache
-d:\Distributiv\TESTER\TESTER\bin\Debug\TESTER.exe.config
 d:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.exe
 d:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.pdb
 D:\Distributiv\TESTER\TESTER\bin\Debug\TESTER.exe

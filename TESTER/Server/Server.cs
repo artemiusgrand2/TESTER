@@ -58,17 +58,17 @@ namespace TESTER
         public LoadProject Load { get { return _load; } set { _load = value; } }
         #endregion
 
-        public Server(bool IsAvto)
+        public Server(bool IsAvto, string connectionString)
         {
             //подключение к импульс серверу
 
-            ServerConfiguration config = ServerConfiguration.FromFile(ConfigurationManager.AppSettings["cfgpath"]);
+            ServerConfiguration config = ServerConfiguration.FromFile(App.Config.AppSettings.Settings["cfgpath"].Value);
             try
             {
-                interval = int.Parse(System.Configuration.ConfigurationManager.AppSettings["updateInterval"]);
+                interval = int.Parse(App.Config.AppSettings.Settings["updateInterval"].Value);
             }
             catch { }
-            _client = new ImpulsesClient(config.Stations, ConfigurationManager.AppSettings["server"], System.Configuration.ConfigurationManager.AppSettings["file_impuls"], interval);
+            _client = new ImpulsesClient(config.Stations, connectionString, App.Config.AppSettings.Settings["file_impuls"].Value, interval);
             _load = new LoadProject();
             _load.LoadImpuls(IsAvto, this, config.Stations);
         }
@@ -79,7 +79,7 @@ namespace TESTER
             _client.Start();
             try
             {
-                port = int.Parse(System.Configuration.ConfigurationManager.AppSettings["port"]);
+                port = int.Parse(App.Config.AppSettings.Settings["port"].Value);
             }
             catch { }
             //подключаем свой сервер транслятор

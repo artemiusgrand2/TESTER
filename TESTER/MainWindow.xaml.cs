@@ -40,7 +40,7 @@ namespace TESTER
     {
         #region Переменные
 
-        ScaleTransform scaletransform = new ScaleTransform(1, 1);
+        ScaleTransform scaletransform = new ScaleTransform(1, 1); 
         /// <summary>
         /// индекс последней из выбранных станций
         /// </summary>
@@ -181,10 +181,15 @@ namespace TESTER
                 //
                 ImpulsesClient.ConnectDisconnectionServer += ConnectCloseServer;
                 ImpulsesClient.NewData += NewInfomation;
-                server = new Server(checkBox_work_view.IsChecked.Value);
+                checkBox_reserve.IsChecked = !App.IsServer1;
+                SetNameColorServer(App.IsServer1);
+                //
+                if (App.CountServer == 1)
+                    checkBox_reserve.IsEnabled = false;
+                server = new Server(checkBox_work_view.IsChecked.Value, (!checkBox_reserve.IsChecked.Value) ? App.Config.AppSettings.Settings["server1"].Value : App.Config.AppSettings.Settings["server2"].Value);
                 FullStations(server.Load.Station);
                 server.Start();
-           
+                //
                 TableTest.ItemsSource = server.Load.TestFile.Scripts;
                 server.Load.TestFile.NewState += NewStateTest;
                 server.Load.TestFile.NewNumberState += NewCurrentTest;
@@ -198,9 +203,8 @@ namespace TESTER
                 IsDifferences = App.IsDifferences;
                 textBox_name_impuls.Text = App.Filter;
                 if (!string.IsNullOrEmpty(App.Filter))
-                {
                     IsShowFindResult = true;
-                }
+                //
                 if (App.StationsNumber.Count > 0)
                 {
                     switch (App.StationsNumber.Count)
@@ -282,6 +286,26 @@ namespace TESTER
                 name_current_text.Text = nametest;
             }
               ));
+        }
+
+        private void SetNameColorServer(bool IsServer1)
+        {
+            if (IsServer1)
+            {
+                if (App.Config.AppSettings.Settings.AllKeys.Contains("name1"))
+                    info_status_test.Content = App.Config.AppSettings.Settings["name1"].Value;
+
+                if (App.Config.AppSettings.Settings.AllKeys.Contains("fpColor1"))
+                    info_status_test.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(App.Config.AppSettings.Settings["fpColor1"].Value));
+            }
+            else
+            {
+                if (App.Config.AppSettings.Settings.AllKeys.Contains("name2"))
+                    info_status_test.Content = App.Config.AppSettings.Settings["name2"].Value;
+
+                if (App.Config.AppSettings.Settings.AllKeys.Contains("fpColor2"))
+                    info_status_test.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(App.Config.AppSettings.Settings["fpColor2"].Value));
+            }
         }
 
         private void NotVisible(System.Windows.Visibility visible1, System.Windows.Visibility visible2)
@@ -1271,5 +1295,11 @@ namespace TESTER
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private void checkBox_reserve_Click(object sender, RoutedEventArgs e)
+        {
+            SetNameColorServer(!checkBox_reserve.IsChecked.Value);
+            server.Client.Restart();
+            server.Client.ConnectionString = (!checkBox_reserve.IsChecked.Value) ? App.Config.AppSettings.Settings["server1"].Value : App.Config.AppSettings.Settings["server2"].Value;
+        }
     }
 }
