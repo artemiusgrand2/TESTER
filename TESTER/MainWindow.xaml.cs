@@ -148,7 +148,7 @@ namespace TESTER
             }
         }
 
-        bool IsRunDifferences = false;
+        bool IsRunShowFindResult = false;
 
         #endregion 
 
@@ -408,13 +408,12 @@ namespace TESTER
                     }
                 }
                 //
-                if (!IsRunDifferences && (isDifferences || IsShowFindResult))
+                FindDifferences();
+                if (!IsRunShowFindResult && IsShowFindResult)
                 {
-                    if (IsDifferences)
-                        FindDifferences();
                     if (IsShowFindResult)
                         IsShowOnlyFunction();
-                    IsRunDifferences = !IsRunDifferences;
+                    IsRunShowFindResult = !IsRunShowFindResult;
                 }
                 //
                 ShowInfoImpuls();
