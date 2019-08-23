@@ -197,8 +197,8 @@ namespace TESTER
                 server.Load.TestFile.NameTest += GetNameTest;
                 server.Load.TestFile.NotVisible += NotVisible;
                 server.Load.TestFile.CurrentSecondWait += CurrentTimeWait;
-                _hook = new UserActivityHook();
-                _hook.KeyDown += new System.Windows.Forms.KeyEventHandler(MyKeyDown);
+                //_hook = new UserActivityHook();
+                //_hook.KeyDown += new System.Windows.Forms.KeyEventHandler(MyKeyDown);
                 //
                 IsDifferences = App.IsDifferences;
                 textBox_name_impuls.Text = App.Filter;
@@ -252,7 +252,7 @@ namespace TESTER
                     }
                 }
             }
-            catch (Exception error) { MessageBox.Show(error.Message); _hook.Stop(); }
+            catch (Exception error) { MessageBox.Show(error.Message); /*_hook.Stop();*/ }
         }
 
         private void MyKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)     
@@ -390,19 +390,51 @@ namespace TESTER
                         if (TypeWork == TypeWork.fromServer)
                         {
                             var findModel = panels.Where(x => x.CurrentStation == value.Key).ToList();
+                            var impulsesUpdates = new List<Impuls>();
                             foreach (var impuls in value.Value.CollectionImpulses.Where(x=>x.Type == TypeImpuls.ts))
                             {
-                                impuls.State = GetState(value.Key, impuls.Name);
-                                findModel.ForEach(x =>
+                                var newState = GetState(value.Key, impuls.Name);
+                                if (newState != impuls.State)
                                 {
-                                    if (x.Collectionbuttons.ContainsKey(impuls.Name))
+                                    impuls.State = newState;
+                                    impulsesUpdates.Add(impuls);
+                                    findModel.ForEach(x =>
                                     {
-                                        if (x.Collectionbuttons[impuls.Name].ContainsKey(impuls.Type))
+                                        if (x.Collectionbuttons.ContainsKey(impuls.Name))
                                         {
-                                            SetState(impuls.State, x.Collectionbuttons[impuls.Name][impuls.Type]);
+                                            if (x.Collectionbuttons[impuls.Name].ContainsKey(impuls.Type))
+                                            {
+                                                SetState(impuls.State, x.Collectionbuttons[impuls.Name][impuls.Type]);
+                                                x.Collectionbuttons[impuls.Name][impuls.Type].ToList().ForEach(y =>
+                                                {
+                                                    y.BorderBrush = Brushes.DarkBlue;
+                                                    y.BorderThickness = new Thickness(3);
+                                                });
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                } 
+                            }
+                            //
+                            if(impulsesUpdates.Count > 0)
+                            {
+                                foreach (var impuls in value.Value.CollectionImpulses.Where(x => x.Type == TypeImpuls.ts && !impulsesUpdates.Contains(x)))
+                                {
+                                    findModel.ForEach(x =>
+                                    {
+                                        if (x.Collectionbuttons.ContainsKey(impuls.Name))
+                                        {
+                                            if (x.Collectionbuttons[impuls.Name].ContainsKey(impuls.Type))
+                                            {
+                                                x.Collectionbuttons[impuls.Name][impuls.Type].ToList().ForEach(y =>
+                                                {
+                                                    y.BorderBrush = Brushes.Brown;
+                                                    y.BorderThickness = new Thickness(1);
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
@@ -467,6 +499,7 @@ namespace TESTER
                 }
             }
         }
+
 
         private void SetState(ImpulseState state, IList<Button> buttons)
         {
@@ -991,7 +1024,7 @@ namespace TESTER
         {
             if (!App.Close)
             {
-                _hook.Stop();
+               // _hook.Stop();
                 server.Stop();
                 _timer_mig.Stop();
                 server.Load.TestFile.StopTest(string.Empty);

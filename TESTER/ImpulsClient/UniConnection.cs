@@ -7,7 +7,6 @@ using System.Net.Sockets;
 
 namespace sdm.diagnostic_section_model.client_impulses
 {
-	delegate void ClientDisconnectDelegate(object sender, EventArgs args);
 
 	class UniConnection
 	{
@@ -79,11 +78,6 @@ namespace sdm.diagnostic_section_model.client_impulses
 				throw new UniConnectionException(UniConnectionError.ConnectionClosed);
 			}
 		}
-
-		/// <summary>
-		/// Событие на отключение клиента
-		/// </summary>
-		public event ClientDisconnectDelegate OnDisconnect;
 
 		/// <summary>
 		/// Открыть клиентское соединение
@@ -198,8 +192,6 @@ namespace sdm.diagnostic_section_model.client_impulses
 					m_socket.Shutdown(SocketShutdown.Send);
 					m_socket.Close();
 				}
-				if(OnDisconnect != null)
-					OnDisconnect(this, null);
 				else
 					System.Diagnostics.Debug.WriteLine(string.Format("Client {0} disconnected", m_name));
 			}
