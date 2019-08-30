@@ -90,6 +90,10 @@ namespace TESTER
         /// </summary>
         double scrollplus = 1.05;
 
+        //int step = 1;
+
+        //DateTime timeSend = DateTime.MinValue;
+
         ObservableCollection<RowTable> table = new ObservableCollection<RowTable>() ;
 
         List<DataStationView> panels = new List<DataStationView>();
@@ -439,6 +443,35 @@ namespace TESTER
                         }
                     }
                 }
+
+                //if((DateTime.Now- timeSend).TotalSeconds > 7)
+                //{
+                //    switch (step)
+                //    {
+                //        case 1:
+                //            {
+                //                server.Client.SendImpulse("ГРИп", 76000012, ImpulseState.Execute); server.Client.SendImpulse("М2 М6", 76000012, ImpulseState.Execute);
+                //                server.Client.SendImpulse("М1 Ч1о", 76000012, ImpulseState.Execute);
+                //                step++;
+                //            }
+                //            break;
+                //        case 2:
+                //            {
+                //                server.Client.SendImpulse("М6 Н1", 76000012, ImpulseState.Execute); server.Client.SendImpulse("М2 М6о", 76000012, ImpulseState.Execute);
+                //                step++;
+                //            }
+                //            break;
+                //        case 3:
+                //            {
+                //                server.Client.SendImpulse("М1 Ч1", 76000012, ImpulseState.Execute); server.Client.SendImpulse("М6 Н1о", 76000012, ImpulseState.Execute);
+                //                server.Client.SendImpulse("ГРИп", 76000012, ImpulseState.Execute);
+                //                step =1;
+                //            }
+                //            break;
+                //    }
+                //    //
+                //    timeSend = DateTime.Now;
+                //}
                 //
                 FindDifferences();
                 if (!IsRunShowFindResult && IsShowFindResult)
@@ -971,9 +1004,9 @@ namespace TESTER
             if (selectButton != null)
             {
                 string name = selectButton.Content.ToString();
-                var station = panels.Where(x => x.IsFindButton(selectButton)).FirstOrDefault().CurrentStation;
                 if(tabImpulses.SelectedIndex == 0)
                 {
+                    var station = panels.Where(x => x.IsFindButton(selectButton)).FirstOrDefault().CurrentStation;
                     if (!IsShowFindResult)
                         ClearLastSelect(IsShowFindResult);
                     if (checkBox_work_view.IsChecked.Value)
@@ -1277,6 +1310,8 @@ namespace TESTER
                 }
                 //
                 panels.Where(x => panels.IndexOf(x) > 0).ToList().ForEach(x => x.IsShow = false);
+                IsDifferences = false;
+                FindDifferences();
             }
             else if (radio.Content.ToString() == "2")
             {
