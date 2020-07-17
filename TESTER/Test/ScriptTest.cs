@@ -14,7 +14,7 @@ namespace TESTER
         public const string section = "р";
     }
 
-    enum ViewTypeRecord
+    public enum ViewTypeRecord
     {
         none = 0,
         execute = 1,
@@ -36,7 +36,7 @@ namespace TESTER
     /// <summary>
     /// класс описания сценария тестирования
     /// </summary>
-    class ScriptTest
+    public  class ScriptTest
     {
         #region Переменные и свойства
         /// <summary>

@@ -75,3 +75,4 @@ D:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.csproj.GenerateResource.Cache
 D:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.exe
 D:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.pdb
 D:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.csprojResolveAssemblyReference.cache
+d:\Distributiv\TESTER\TESTER\bin\Debug\TESTER.exe.config

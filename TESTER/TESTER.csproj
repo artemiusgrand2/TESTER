@@ -101,7 +101,9 @@
     <Compile Include="Models\HeaderMenu.cs" />
     <Compile Include="Models\RowModel.cs" />
     <Compile Include="RowTable.cs" />
-    <Compile Include="Server\Server.cs" />
+    <Compile Include="ServerListen\ICommunicationController.cs" />
+    <Compile Include="ServerListen\ISController.cs" />
+    <Compile Include="ServerListen\ListenController.cs" />
     <Compile Include="Test\CommandTU.cs" />
     <Compile Include="Test\FileScript.cs" />
     <Compile Include="Test\ScriptTest.cs" />
@@ -180,9 +182,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="App1.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

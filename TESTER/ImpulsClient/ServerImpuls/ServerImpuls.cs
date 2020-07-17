@@ -150,7 +150,7 @@ namespace TESTER
             return massiv_binary;
         }
 
-        public  byte[] Vihod_massiv_dann(IList<int> stationsNumner)
+        public  byte[] OutPutData(IList<int> stationsNumner)
         {
             //
             var massiv_byte = new List<byte>();

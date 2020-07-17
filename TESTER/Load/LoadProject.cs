@@ -8,10 +8,11 @@ using System.Windows;
 using sdm.diagnostic_section_model;
 using TESTER.Enums;
 using TESTER.Constants;
+using TESTER.ServerListen;
 
 namespace TESTER
 {
-    class LoadProject
+    public class LoadProject
     {
 
         #region Переменные и свойства
@@ -43,7 +44,7 @@ namespace TESTER
         }
         #endregion
 
-        public void LoadImpuls(bool IsAvto, Server server, sdm.diagnostic_section_model.StationRecord[] inp_station_records)
+        public void LoadImpuls(bool IsAvto, ListenController server, sdm.diagnostic_section_model.StationRecord[] inp_station_records)
         {
             GetCollectionStation(_collectionstations, IsAvto, inp_station_records);
             _test.Server = server;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TESTER
 {
-    class Stations
+    public class Stations
     {
         /// <summary>
         /// Название станции

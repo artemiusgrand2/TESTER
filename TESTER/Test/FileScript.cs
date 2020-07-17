@@ -5,6 +5,7 @@ using System.Windows;
 using System.Timers;
 using sdm.diagnostic_section_model.client_impulses;
 using TESTER.Enums;
+using TESTER.ServerListen;
 
 namespace TESTER
 {
@@ -17,7 +18,7 @@ namespace TESTER
     /// <summary>
     /// класс описания фала тестов
     /// </summary>
-    class FileScript
+    public class FileScript
     {
         #region Переменные и свойства
         List<ScriptTest> _scripts = new List<ScriptTest>();
@@ -57,7 +58,7 @@ namespace TESTER
         /// <summary>
         /// загруженный проект
         /// </summary>
-        public Server Server {get;set;}
+        public ListenController Server {get;set;}
         /// <summary>
         /// переход на новый тест
         /// </summary>
@@ -218,7 +219,7 @@ namespace TESTER
         {
             try
             {
-                if (Server.Load.Station.ContainsKey(currenttest.NameStation))
+                if (Server.ProjectTester.Station.ContainsKey(currenttest.NameStation))
                 {
                     if (IsStart)
                     {
@@ -299,16 +300,16 @@ namespace TESTER
 
         private void SetImpuls(int numberstation, Impuls imp)
         {
-            if (Server.Load.CollectionStations.ContainsKey(numberstation))
+            if (Server.ProjectTester.CollectionStations.ContainsKey(numberstation))
             {
-                foreach (var impuls in Server.Load.CollectionStations[numberstation].CollectionImpulses)
+                foreach (var impuls in Server.ProjectTester.CollectionStations[numberstation].CollectionImpulses)
                 {
                     if (imp.Name != ScriptTest.AllImp)
                     {
                         if (impuls.Name == imp.Name)
                         {
                             impuls.State = imp.State;
-                            Server.Client.data.Stations[numberstation].TS.set_state(imp.Name, GetState(imp.State), DateTime.Now);
+                            Server.SourceImpulsServer.data.Stations[numberstation].TS.set_state(imp.Name, GetState(imp.State), DateTime.Now);
                             if (UpdateState != null)
                                 UpdateState(numberstation, impuls);
                             return;
@@ -317,7 +318,7 @@ namespace TESTER
                     else
                     {
                         impuls.State = imp.State;
-                        Server.Client.data.Stations[numberstation].TS.set_state(imp.Name, GetState(imp.State), DateTime.Now);
+                        Server.SourceImpulsServer.data.Stations[numberstation].TS.set_state(imp.Name, GetState(imp.State), DateTime.Now);
                         if (UpdateState != null)
                             UpdateState(numberstation, impuls);
                     }
@@ -381,15 +382,15 @@ namespace TESTER
                 {
                     if (!string.IsNullOrEmpty(script.NameStation))
                     {
-                        if (Server.Load.Station.ContainsKey(script.NameStation))
-                            script.StationNumber = Server.Load.Station[script.NameStation];
+                        if (Server.ProjectTester.Station.ContainsKey(script.NameStation))
+                            script.StationNumber = Server.ProjectTester.Station[script.NameStation];
                         script.NameRecord = _lastnamerecord;
                         continue;
                     }
                 }
                 //
-                if (Server.Load.Station.ContainsKey(_lastnamestation))
-                    script.StationNumber = Server.Load.Station[_lastnamestation];
+                if (Server.ProjectTester.Station.ContainsKey(_lastnamestation))
+                    script.StationNumber = Server.ProjectTester.Station[_lastnamestation];
                 script.NameStation = _lastnamestation;
                 script.NameRecord = _lastnamerecord;
             }

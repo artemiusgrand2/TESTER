@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace TESTER
 {
-    class CommandTU
+    public class CommandTU
     {
         /// <summary>
         /// Номер станции
