@@ -14,9 +14,13 @@ namespace TESTER
 
         string name;
 
-        int countImpuls;
+        int countImpulsTs;
 
-        int notcontrolcountImpuls;
+        int countImpulsTu;
+
+        int countReceiveTs;
+
+        int notcontrolcountImpulsTs;
 
         #endregion
 
@@ -55,20 +59,53 @@ namespace TESTER
             }
         }
 
-
-        public int CountImpuls
+        public int CountImpulsTs
         {
             get
             {
-                return countImpuls;
+                return countImpulsTs;
             }
 
             set
             {
-                if (value != countImpuls)
+                if (value != countImpulsTs)
                 {
-                    countImpuls = value;
-                    OnPropertyChanged("CountImpuls");
+                    countImpulsTs = value;
+                    OnPropertyChanged("CountImpulsTs");
+                }
+            }
+        }
+
+        public int CountImpulsTu
+        {
+            get
+            {
+                return countImpulsTu;
+            }
+
+            set
+            {
+                if (value != countImpulsTu)
+                {
+                    countImpulsTu = value;
+                    OnPropertyChanged("CountImpulsTu");
+                }
+            }
+        }
+
+        public int CountReceiveTs
+        {
+            get
+            {
+                return countReceiveTs;
+            }
+
+            set
+            {
+                if (value != countReceiveTs)
+                {
+                    countReceiveTs = value;
+                    OnPropertyChanged("CountReceiveTs");
                 }
             }
         }
@@ -77,14 +114,14 @@ namespace TESTER
         {
             get
             {
-                return notcontrolcountImpuls;
+                return notcontrolcountImpulsTs;
             }
 
             set
             {
-                if (value != notcontrolcountImpuls)
+                if (value != notcontrolcountImpulsTs)
                 {
-                    notcontrolcountImpuls = value;
+                    notcontrolcountImpulsTs = value;
                     OnPropertyChanged("NotcontrolCountImpuls");
                 }
             }

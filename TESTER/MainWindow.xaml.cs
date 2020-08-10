@@ -134,6 +134,7 @@ namespace TESTER
             }
         }
 
+
         bool isShowFindResult = false;
 
         public bool IsShowFindResult
@@ -482,6 +483,7 @@ namespace TESTER
                     IsRunShowFindResult = !IsRunShowFindResult;
                 }
                 //
+                FullStations(server.ProjectTester.Station);
                 ShowInfoImpuls();
             }
             catch { }
@@ -644,6 +646,8 @@ namespace TESTER
                             }
                         }
                     }
+                    //
+                    FullStations(server.ProjectTester.Station);
                 }
                 //
                 ShowInfoImpuls();
@@ -659,7 +663,15 @@ namespace TESTER
                 {
                     foreach (KeyValuePair<string, int> value in _stations)
                     {
-                        table.Add(new RowTable() { Name = value.Key, Station = value.Value, CountImpuls = server.ProjectTester.CollectionStations[value.Value].CollectionImpulses.Count, NotcontrolCountImpuls = GetNotControl(server.ProjectTester.CollectionStations[value.Value].CollectionImpulses) });
+                        table.Add(new RowTable()
+                        {
+                            Name = value.Key,
+                            Station = value.Value,
+                            CountImpulsTs = server.SourceImpulsServer.data.Stations[value.Value].TS.GetCountProjectImpuls(),
+                            CountImpulsTu = server.SourceImpulsServer.data.Stations[value.Value].TU.GetCountProjectImpuls(),
+                            CountReceiveTs = server.SourceImpulsServer.data.Stations[value.Value].TS.RealCountImpuls,
+                            NotcontrolCountImpuls = server.SourceImpulsServer.data.Stations[value.Value].TS.GetCountStateImpuls(ImpulseState.UncontrolledState)
+                        });
                     }
                     //if (table.Count > 0)
                     //    comboBox_stations.SelectedIndex = 0;
@@ -669,37 +681,13 @@ namespace TESTER
                     int index = 0;
                     foreach (KeyValuePair<string, int> value in _stations)
                     {
-                        table[index].NotcontrolCountImpuls = GetNotControl(server.ProjectTester.CollectionStations[value.Value].CollectionImpulses);
+                        table[index].CountReceiveTs = server.SourceImpulsServer.data.Stations[value.Value].TS.RealCountImpuls;
+                        table[index].NotcontrolCountImpuls = server.SourceImpulsServer.data.Stations[value.Value].TS.GetCountStateImpuls(ImpulseState.UncontrolledState);
                         index++;
                     }
                 }
             }
         }
-
-        private string GetNotControlImpulses(IDictionary<int, Impuls> impulses)
-        {
-            int count_notcontol = 0;
-            foreach (var imp in impulses.Values)
-            {
-                if (imp.State == StateControl.notconrol)
-                    count_notcontol++;
-            }
-            //
-            return string.Format("{0} - {1}", impulses.Values.Count, count_notcontol);
-        }
-
-        private int GetNotControl(IList<Impuls> impulses)
-        {
-            int count_notcontol = 0;
-            foreach (var imp in impulses.Where(x=>x.Type == TypeImpuls.ts).ToList())
-            {
-                if (imp.State == StateControl.notconrol)
-                    count_notcontol++;
-            }
-            //
-            return count_notcontol;
-        }
-
         /// <summary>
         /// ширина текста в пикселях
         /// </summary>
@@ -778,8 +766,8 @@ namespace TESTER
         {
             if (server.SourceImpulsServer.data.Stations.ContainsKey(lastSelectStation))
             {
-                Title = string.Format("Tестер (Количество импульсов в проекте - {0}, Количество импульсов полученных с сервера - {1})", server.SourceImpulsServer.data.Stations[lastSelectStation].TS.GetCountProjectImpuls(),
-                    server.SourceImpulsServer.data.Stations[lastSelectStation].TS.RealCountImpuls);
+                Title = $"Tестер (Количество импульсов TC - {server.SourceImpulsServer.data.Stations[lastSelectStation].TS.GetCountProjectImpuls()}|ТУ - {server.SourceImpulsServer.data.Stations[lastSelectStation].TU.GetCountProjectImpuls()})" +
+                     $"|полученных ТС {server.SourceImpulsServer.data.Stations[lastSelectStation].TS.RealCountImpuls}| неконтр {server.SourceImpulsServer.data.Stations[lastSelectStation].TS.GetCountStateImpuls(ImpulseState.UncontrolledState)}";
             }
         }
 
@@ -907,6 +895,7 @@ namespace TESTER
         {
             if (IsDifferences)
             {
+                var starr = DateTime.Now;
                 var stationsModel = panels.Where(x => x.IsShow && x.CurrentStation != -1).ToList();
                 var maxTS = stationsModel.Max(x => x.Collectionbuttons.Count);
                 var stationModel = stationsModel.Where(x => x.Collectionbuttons.Count == maxTS).FirstOrDefault();
@@ -926,29 +915,31 @@ namespace TESTER
                         //видимые элементы
                         stationsNumber.ForEach(x =>
                         {
-                            var impulses = server.ProjectTester.CollectionStations[x].CollectionImpulses.Where(y => y.Type == TypeImpuls.ts).ToList();
-                            if (impulses.Count > index)
-                                stationsModel.Where(y => y.CurrentStation == x).ToList().ForEach(y =>
+                            var impulses = server.ProjectTester.CollectionStations[x].CollectionImpulses.Where(y => y.Type == TypeImpuls.ts);
+                            if (impulses.Count() > index)
+                                foreach(var station in stationsModel.Where(y => y.CurrentStation == x))
                                 {
-                                    y.SetVisiblity(impulses[index], Visibility.Collapsed);
-                                });
+                                    station.SetVisiblity(impulses.ElementAt(index), Visibility.Collapsed);
+                                }
                         });
                     }
                     else
                     {
                         stationsNumber.ForEach(x =>
                         {
-                            var impulses = server.ProjectTester.CollectionStations[x].CollectionImpulses.Where(y => y.Type == TypeImpuls.ts).ToList();
-                            if (impulses.Count > index)
-                                stationsModel.Where(y => y.CurrentStation == x).ToList().ForEach(y =>
-                            {
-                                y.SetVisiblity(impulses[index], Visibility.Visible);
-                            });
+                            var impulses = server.ProjectTester.CollectionStations[x].CollectionImpulses.Where(y => y.Type == TypeImpuls.ts);
+                            if (impulses.Count() > index)
+                                foreach (var station in stationsModel.Where(y => y.CurrentStation == x))
+                                {
+                                    station.SetVisiblity(impulses.ElementAt(index), Visibility.Visible);
+                                }
                         });
                     }
                 }
+                var delta = DateTime.Now - starr;
+                var d = 0;
                 //
-                stationsModel.ForEach(x => x.Panel.UpdateLayout());
+               // stationsModel.ForEach(x => x.Panel.UpdateLayout());
             }
             else
                 IsShowOnlyFunction();

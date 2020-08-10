@@ -50,7 +50,8 @@ namespace TESTER.Models
                 {
                     foreach (var button in Collectionbuttons[impuls.Name][impuls.Type])
                     {
-                        button.Visibility = visibility;
+                        if (button.Visibility != visibility)
+                            button.Visibility = visibility;
                     }
                 }
             }

@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns:local="clr-namespace:TESTER"
-        Title="Тестер" WindowState="Maximized"  Topmost="True" SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen"   Closing="Window_Closing" Icon="/TESTER;component/Images/Эмблема.ico">
+        Title="Тестер" WindowState="Maximized"  Topmost="True" SizeChanged="Window_SizeChanged"  x:Name="TesterWindow" WindowStartupLocation="CenterScreen"   Closing="Window_Closing" Icon="/TESTER;component/Images/Эмблема.ico">
 
     <Window.Resources>
         <local:CurrentPlayMesToColorConverter x:Key="CurrentPlay" />
@@ -18,7 +18,11 @@
 
                 <TextBlock Text="{Binding Station}" Width="60" VerticalAlignment="Center"  />
 
-                <TextBlock Text="{Binding CountImpuls}" Width="40" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding CountImpulsTs}" Width="40" VerticalAlignment="Center" />
+
+                <TextBlock Text="{Binding CountImpulsTu}" Width="40" VerticalAlignment="Center" />
+
+                <TextBlock Text="{Binding CountReceiveTs}" Width="40" VerticalAlignment="Center" />
 
                 <TextBlock Text="{Binding NotcontrolCountImpuls}" Width="40" VerticalAlignment="Center" />
 
@@ -53,7 +57,8 @@
                     <ComboBox HorizontalAlignment="Left" VerticalAlignment="Center" Name="comboBox_all_impuls" Width="150"  SelectionChanged="comboBox_all_impuls_SelectionChanged"  Margin="5,0,0,0"  />
                     <CheckBox Content="Автономная работа" HorizontalAlignment="Left"  Name="checkBox_work_view" FontWeight="Bold"  Height="16" VerticalAlignment="Center"  Click="checkBox_work_view_Click" Margin="5,0,0,0" />
                     <CheckBox Content="Резерв" HorizontalAlignment="Left"  Name="checkBox_reserve" FontWeight="Bold"  Height="16" VerticalAlignment="Center"   Click="checkBox_reserve_Click" Margin="5,0,0,0" />
-                    
+                    <CheckBox Content="Поверх окон" HorizontalAlignment="Left"  FontWeight="Bold"  Height="16" VerticalAlignment="Center"  IsChecked="{Binding  ElementName=TesterWindow, Path=Topmost}" Margin="5,0,0,0" />
+
                     <GridSplitter  Width="5" Background="Brown"  BorderBrush="LightGreen" Margin="5,0,0,0"/>
                     <Button Content="Загрузить" Height="23" HorizontalAlignment="Left"  Name="button_load_test" VerticalAlignment="Center"  Width="75" FontWeight="Bold" Click="button_load_test_Click" Margin="5,0,0,0" />
                     <WrapPanel Name="panel_current_test" Visibility="Collapsed" Margin="5,0,0,0">

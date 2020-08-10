@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace sdm.diagnostic_section_model.client_impulses
@@ -67,7 +68,14 @@ namespace sdm.diagnostic_section_model.client_impulses
             return m_impulseStates.Length;
         }
 
-		public List<string> Names
+
+        public int GetCountStateImpuls(ImpulseState state)
+        {
+            return m_impulseStates.Where(x=>x == state).Count();
+        }
+
+
+        public List<string> Names
 		{
 			get
 			{
