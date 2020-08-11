@@ -42,6 +42,12 @@ namespace TESTER
                 _collectionstations = value;
             }
         }
+
+        private readonly IDictionary<TypeImpulsParser, string> parserDictionary = new Dictionary<TypeImpulsParser, string>()
+        {
+             {TypeImpulsParser.tsWithHelp,  @"\s*@N\s*'(.+)'\s*;\s*(.+)\s*"}, {TypeImpulsParser.ts,  @"\s*@N\s*'(.+)'\s*"},
+             {TypeImpulsParser.tuWithHelp,  @"\s*@U\s*'(.+)'\s*;\s*(.+)\s*"}, {TypeImpulsParser.tu,  @"\s*@U\s*'(.+)'\s*"},
+        };
         #endregion
 
         public void LoadImpuls(bool IsAvto, ListenController server, sdm.diagnostic_section_model.StationRecord[] inp_station_records)
@@ -68,30 +74,6 @@ namespace TESTER
             catch (Exception error) { MessageBox.Show(error.Message); }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="file"></param>
-        private void ParserTableFile(string file)
-        {
-            if (File.Exists(file))
-            {
-
-            }
-            else
-                MessageBox.Show(string.Format("Файл разбики по ячейкам по адресу - {0} не найден", file));
-        }
-
-        private bool IsStationCollection(int station)
-        {
-            foreach (KeyValuePair<int, Stations> value in _collectionstations)
-            {
-                if (value.Key == station)
-                    return true;
-            }
-            //
-            return false;
-        }
 
         /// <summary>
         /// возвращаем коллекцию вида название станции -- номер станции
@@ -149,46 +131,57 @@ namespace TESTER
             catch { }
         }
 
-        //private string GetNameStation(List<string> file)
-        //{
-        //    try
-        //    {
-        //        foreach (string str in file)
-        //        {
-        //            string[] massiv = str.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        //            if (massiv.Length == 2 && massiv[0].ToUpper() == "@BEGIN")
-        //            {
-        //                return massiv[1].Trim(new char[] { '\'' });
-        //            }
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return string.Empty;
-        //    }
-        //    //
-        //    return string.Empty;
-        //}
-
-        private static IList<Impuls> GetImpulses(List<string> file)
+        private  IList<Impuls> GetImpulses(List<string> file)
         {
             var impulses = new List<Impuls>();
             try
             {
                 foreach (string str in file)
                 {
-                    string[] stroka = str.Split(new string[] { " '" }, StringSplitOptions.RemoveEmptyEntries);
-                    if ((stroka.Length > 1))
+                    foreach(var keyValueParser in parserDictionary)
                     {
-                        var nameStartPos = str.IndexOf('\'', 0) + 1;
-                        if(str.IndexOf('\'', nameStartPos) != -1)
+                        var parser = Regex.Match(str, keyValueParser.Value);
+                        if (parser.Success)
                         {
-                            if (stroka[0] == "@N")
-                                impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.ts));
-                            else if (stroka[0] == "@U")
-                                impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.tu));
+                            switch (keyValueParser.Key)
+                            {
+                                case TypeImpulsParser.ts:
+                                    {
+                                        impulses.Add(new Impuls(parser.Groups[1].Value, TypeImpuls.ts));
+                                    }
+                                    break;
+                                case TypeImpulsParser.tsWithHelp:
+                                    {
+                                        impulses.Add(new Impuls(parser.Groups[1].Value, TypeImpuls.ts, parser.Groups[2].Value));
+                                    }
+                                    break;
+                                case TypeImpulsParser.tu:
+                                    {
+                                        impulses.Add(new Impuls(parser.Groups[1].Value, TypeImpuls.tu));
+                                    }
+                                    break;
+                                case TypeImpulsParser.tuWithHelp:
+                                    {
+                                        impulses.Add(new Impuls(parser.Groups[1].Value, TypeImpuls.tu, parser.Groups[2].Value));
+                                    }
+                                    break;
+                            }
+                            break;
                         }
                     }
+                
+                    //string[] stroka = str.Split(new string[] { " '" }, StringSplitOptions.RemoveEmptyEntries);
+                    //if ((stroka.Length > 1))
+                    //{
+                    //    var nameStartPos = str.IndexOf('\'', 0) + 1;
+                    //    if(str.IndexOf('\'', nameStartPos) != -1)
+                    //    {
+                    //        if (stroka[0] == "@N")
+                    //            impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.ts));
+                    //        else if (stroka[0] == "@U")
+                    //            impulses.Add(new Impuls(str.Substring(nameStartPos, str.IndexOf('\'', nameStartPos) - nameStartPos), TypeImpuls.tu));
+                    //    }
+                    //}
                 }
             }
             catch { }

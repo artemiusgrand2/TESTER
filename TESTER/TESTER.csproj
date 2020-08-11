@@ -68,6 +68,7 @@
     <Compile Include="Converters\VisibilityMultiElement.cs" />
     <Compile Include="Enums\StateControl.cs" />
     <Compile Include="Enums\TypeImpuls.cs" />
+    <Compile Include="Enums\TypeImpulsParser.cs" />
     <Compile Include="Enums\TypeWork.cs" />
     <Compile Include="Helps.cs" />
     <Compile Include="ImpulsClient\DataContainer.cs" />

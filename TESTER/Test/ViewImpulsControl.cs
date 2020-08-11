@@ -14,11 +14,22 @@ namespace TESTER
         /// </summary>
         public string Name { get; private set; }
         /// <summary>
+        /// Описание импульса
+        /// </summary>
+        public string ToolTip { get; private set; }
+        /// <summary>
         /// Значение импульса
         /// </summary>
         public StateControl State { get; set; }
 
         public TypeImpuls Type { get; private set; }
+
+        public Impuls(string name, TypeImpuls type, string toolTip)
+        {
+            Name = name;
+            Type = type;
+            ToolTip = toolTip;
+        }
 
         public Impuls(string name, TypeImpuls type)
         {

@@ -722,6 +722,7 @@ namespace TESTER
                         button_impuls.LostFocus += button_impuls_LostFocus;
                         button_impuls.GotFocus += button_impuls_GotFocus;
                         button_impuls.Content = impuls.Name;
+                        button_impuls.ToolTip = impuls.ToolTip;
                         if (WidthText(button_impuls) > width)
                             width = WidthText(button_impuls);
                         if(impuls.Type == TypeImpuls.ts)
