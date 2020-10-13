@@ -5,10 +5,10 @@ using System.Text.RegularExpressions;
 using System.Configuration;
 using System.IO;
 using System.Windows;
-using sdm.diagnostic_section_model;
+using SCADA.Common.ImpulsClient;
 using TESTER.Enums;
 using TESTER.Constants;
-using TESTER.ServerListen;
+using TESTER.Connections;
 
 namespace TESTER
 {
@@ -50,7 +50,7 @@ namespace TESTER
         };
         #endregion
 
-        public void LoadImpuls(bool IsAvto, ListenController server, sdm.diagnostic_section_model.StationRecord[] inp_station_records)
+        public void LoadImpuls(bool IsAvto, ServerConnections server, StationRecord[] inp_station_records)
         {
             GetCollectionStation(_collectionstations, IsAvto, inp_station_records);
             _test.Server = server;
@@ -79,7 +79,7 @@ namespace TESTER
         /// возвращаем коллекцию вида название станции -- номер станции
         /// </summary>
         /// <returns></returns>
-        private void GetCollectionStation(Dictionary<int, Stations> Collection, bool IsAvto, sdm.diagnostic_section_model.StationRecord[] inp_station_records)
+        private void GetCollectionStation(Dictionary<int, Stations> Collection, bool IsAvto, StationRecord[] inp_station_records)
         {
             string avto = string.Empty;
             if (!IsAvto)

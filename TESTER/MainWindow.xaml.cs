@@ -16,14 +16,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Configuration;
 using System.Threading;
-using System.Xml;
-using System.Xml.Serialization;
-using sdm.diagnostic_section_model;
-using sdm.diagnostic_section_model.client_impulses;
+
+using SCADA.Common.ImpulsClient;
 using TESTER.Enums;
 using TESTER.Constants;
 using TESTER.Models;
-using TESTER.ServerListen;
+using TESTER.Connections;
 
 namespace TESTER
 {
@@ -65,7 +63,7 @@ namespace TESTER
         /// <summary>
         /// тестовый сервер импульсов
         /// </summary>
-        ListenController server;
+        ServerConnections server;
         /// <summary>
         /// таймер мигания кнопки подтверждения
         /// </summary>
@@ -183,16 +181,16 @@ namespace TESTER
                 panels.Add(new DataStationView(panel1)); panels.Add(new DataStationView(panel2));
                 panels.Add(new DataStationView(panel3)); panels.Add(new DataStationView(panel4));
                 panels[0].IsShow = true;
-               
+
                 //
-                ImpulsesClient.ConnectDisconnectionServer += ConnectCloseServer;
-                ImpulsesClient.NewData += NewInfomation;
+                ImpulsClientCommon.ConnectDisconnectionServer += ConnectCloseServer;
+                ImpulsClientCommon.NewData += NewInfomation;
                 checkBox_reserve.IsChecked = !App.IsServer1;
                 SetNameColorServer(App.IsServer1);
                 //
                 if (App.CountServer == 1)
                     checkBox_reserve.IsEnabled = false;
-                server = new ListenController(checkBox_work_view.IsChecked.Value, (!checkBox_reserve.IsChecked.Value) ? App.Config.AppSettings.Settings["server1"].Value : App.Config.AppSettings.Settings["server2"].Value);
+                server = new ServerConnections(checkBox_work_view.IsChecked.Value, (!checkBox_reserve.IsChecked.Value) ? App.Config.AppSettings.Settings["server1"].Value : App.Config.AppSettings.Settings["server2"].Value);
                 FullStations(server.ProjectTester.Station);
                 server.Start();
                 //
@@ -560,7 +558,7 @@ namespace TESTER
         {
             try
             {
-                switch (server.SourceImpulsServer.data.Stations[station].TS.GetState(name))
+                switch (server.SourceImpulsServer.Data.Stations[station].TS.GetState(name))
                 {
                     case ImpulseState.ActiveState:
                         return StateControl.activ;
@@ -616,15 +614,15 @@ namespace TESTER
         {
             try
             {
-                if (!ImpulsesClient.Connect)
+                if (!ImpulsClientCommon.Connect)
                 {
                     foreach (KeyValuePair<int, Stations> value in server.ProjectTester.CollectionStations)
                     {
-                        if (server.SourceImpulsServer.data.Stations.ContainsKey(value.Key))
+                        if (server.SourceImpulsServer.Data.Stations.ContainsKey(value.Key))
                         {
-                            server.SourceImpulsServer.data.Stations[value.Key].TS.SetAllStatesInTable(ImpulseState.UncontrolledState, DateTime.Now);
-                            server.SourceImpulsServer.data.Stations[value.Key].TS.RealCountImpuls = 0;
-                            server.SourceImpulsServer.data.Stations[value.Key].TU.RealCountImpuls = 0;
+                            server.SourceImpulsServer.Data.Stations[value.Key].TS.SetAllStates(ImpulseState.UncontrolledState, DateTime.Now);
+                            server.SourceImpulsServer.Data.Stations[value.Key].TS.LastCountReceivingImp = 0;
+                            server.SourceImpulsServer.Data.Stations[value.Key].TU.LastCountReceivingImp = 0;
                         }
                         //
                         if (!checkBox_work_view.IsChecked.Value)
@@ -667,10 +665,10 @@ namespace TESTER
                         {
                             Name = value.Key,
                             Station = value.Value,
-                            CountImpulsTs = server.SourceImpulsServer.data.Stations[value.Value].TS.GetCountProjectImpuls(),
-                            CountImpulsTu = server.SourceImpulsServer.data.Stations[value.Value].TU.GetCountProjectImpuls(),
-                            CountReceiveTs = server.SourceImpulsServer.data.Stations[value.Value].TS.RealCountImpuls,
-                            NotcontrolCountImpuls = server.SourceImpulsServer.data.Stations[value.Value].TS.GetCountStateImpuls(ImpulseState.UncontrolledState)
+                            CountImpulsTs = server.SourceImpulsServer.Data.Stations[value.Value].TS.Count,
+                            CountImpulsTu = server.SourceImpulsServer.Data.Stations[value.Value].TU.Count,
+                            CountReceiveTs = server.SourceImpulsServer.Data.Stations[value.Value].TS.LastCountReceivingImp,
+                            NotcontrolCountImpuls = server.SourceImpulsServer.Data.Stations[value.Value].TS.GetCountStateImpuls(ImpulseState.UncontrolledState)
                         });
                     }
                     //if (table.Count > 0)
@@ -681,8 +679,8 @@ namespace TESTER
                     int index = 0;
                     foreach (KeyValuePair<string, int> value in _stations)
                     {
-                        table[index].CountReceiveTs = server.SourceImpulsServer.data.Stations[value.Value].TS.RealCountImpuls;
-                        table[index].NotcontrolCountImpuls = server.SourceImpulsServer.data.Stations[value.Value].TS.GetCountStateImpuls(ImpulseState.UncontrolledState);
+                        table[index].CountReceiveTs = server.SourceImpulsServer.Data.Stations[value.Value].TS.LastCountReceivingImp;
+                        table[index].NotcontrolCountImpuls = server.SourceImpulsServer.Data.Stations[value.Value].TS.GetCountStateImpuls(ImpulseState.UncontrolledState);
                         index++;
                     }
                 }
@@ -765,10 +763,10 @@ namespace TESTER
 
         private void ShowInfoImpuls()
         {
-            if (server.SourceImpulsServer.data.Stations.ContainsKey(lastSelectStation))
+            if (server.SourceImpulsServer.Data.Stations.ContainsKey(lastSelectStation))
             {
-                Title = $"Tестер (Количество импульсов TC - {server.SourceImpulsServer.data.Stations[lastSelectStation].TS.GetCountProjectImpuls()}|ТУ - {server.SourceImpulsServer.data.Stations[lastSelectStation].TU.GetCountProjectImpuls()})" +
-                     $"|полученных ТС {server.SourceImpulsServer.data.Stations[lastSelectStation].TS.RealCountImpuls}| неконтр {server.SourceImpulsServer.data.Stations[lastSelectStation].TS.GetCountStateImpuls(ImpulseState.UncontrolledState)}";
+                Title = $"Tестер (Количество импульсов TC - {server.SourceImpulsServer.Data.Stations[lastSelectStation].TS.Count}|ТУ - {server.SourceImpulsServer.Data.Stations[lastSelectStation].TU.Count})" +
+                     $"|полученных ТС {server.SourceImpulsServer.Data.Stations[lastSelectStation].TS.LastCountReceivingImp}| неконтр {server.SourceImpulsServer.Data.Stations[lastSelectStation].TS.GetCountStateImpuls(ImpulseState.UncontrolledState)}";
             }
         }
 
@@ -1014,21 +1012,21 @@ namespace TESTER
                                         {
                                             selectButton.Background = m_pasivecolor;
                                             impuls.State = StateControl.pasiv;
-                                            server.SourceImpulsServer.data.Stations[station].TS.set_state(name, ImpulseState.PassiveState, DateTime.Now);
+                                            server.SourceImpulsServer.Data.Stations[station].TS.SetState(name, ImpulseState.PassiveState, DateTime.Now);
                                         }
                                         break;
                                     case StateControl.pasiv:
                                         {
                                             selectButton.Background = m_activecolor;
                                             impuls.State = StateControl.activ;
-                                            server.SourceImpulsServer.data.Stations[station].TS.set_state(name, ImpulseState.ActiveState, DateTime.Now);
+                                            server.SourceImpulsServer.Data.Stations[station].TS.SetState(name, ImpulseState.ActiveState, DateTime.Now);
                                         }
                                         break;
                                     case StateControl.notconrol:
                                         {
                                             selectButton.Background = m_activecolor;
                                             impuls.State = StateControl.activ;
-                                            server.SourceImpulsServer.data.Stations[station].TS.set_state(name, ImpulseState.ActiveState, DateTime.Now);
+                                            server.SourceImpulsServer.Data.Stations[station].TS.SetState(name, ImpulseState.ActiveState, DateTime.Now);
                                         }
                                         break;
                                         // }
@@ -1054,8 +1052,8 @@ namespace TESTER
                 server.Stop();
                 _timer_mig.Stop();
                 server.ProjectTester.TestFile.StopTest(string.Empty);
-                ImpulsesClient.ConnectDisconnectionServer -= ConnectCloseServer;
-                ImpulsesClient.NewData -= NewInfomation;
+                ImpulsClientCommon.ConnectDisconnectionServer -= ConnectCloseServer;
+                ImpulsClientCommon.NewData -= NewInfomation;
             }
         }
 
@@ -1080,7 +1078,7 @@ namespace TESTER
                 answer = ProjectConstants.sever;
                 comboBox_all_impuls.Items.Add(ProjectConstants.sever);
                 comboBox_all_impuls.Text = answer;
-                if (!ImpulsesClient.Connect)
+                if (!ImpulsClientCommon.Connect)
                     ServerClose();
             }
 
@@ -1358,8 +1356,7 @@ namespace TESTER
         private void checkBox_reserve_Click(object sender, RoutedEventArgs e)
         {
             SetNameColorServer(!checkBox_reserve.IsChecked.Value);
-            server.SourceImpulsServer.Restart();
-            server.SourceImpulsServer.ConnectionString = (!checkBox_reserve.IsChecked.Value) ? App.Config.AppSettings.Settings["server1"].Value : App.Config.AppSettings.Settings["server2"].Value;
+            server.SourceImpulsServer.ReConnect((!checkBox_reserve.IsChecked.Value) ? App.Config.AppSettings.Settings["server1"].Value : App.Config.AppSettings.Settings["server2"].Value);
         }
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Timers;
-using sdm.diagnostic_section_model.client_impulses;
+using SCADA.Common.ImpulsClient;
 using TESTER.Enums;
-using TESTER.ServerListen;
+using TESTER.Connections;
 
 namespace TESTER
 {
@@ -58,7 +58,7 @@ namespace TESTER
         /// <summary>
         /// загруженный проект
         /// </summary>
-        public ListenController Server {get;set;}
+        public ServerConnections Server {get;set;}
         /// <summary>
         /// переход на новый тест
         /// </summary>
@@ -309,7 +309,7 @@ namespace TESTER
                         if (impuls.Name == imp.Name)
                         {
                             impuls.State = imp.State;
-                            Server.SourceImpulsServer.data.Stations[numberstation].TS.set_state(imp.Name, GetState(imp.State), DateTime.Now);
+                            Server.SourceImpulsServer.Data.Stations[numberstation].TS.SetState(imp.Name, GetState(imp.State), DateTime.Now);
                             if (UpdateState != null)
                                 UpdateState(numberstation, impuls);
                             return;
@@ -318,7 +318,7 @@ namespace TESTER
                     else
                     {
                         impuls.State = imp.State;
-                        Server.SourceImpulsServer.data.Stations[numberstation].TS.set_state(imp.Name, GetState(imp.State), DateTime.Now);
+                        Server.SourceImpulsServer.Data.Stations[numberstation].TS.SetState(imp.Name, GetState(imp.State), DateTime.Now);
                         if (UpdateState != null)
                             UpdateState(numberstation, impuls);
                     }
