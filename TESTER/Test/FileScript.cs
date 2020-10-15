@@ -11,7 +11,7 @@ namespace TESTER
 {
     public delegate void NewState(bool state, string info);
     public delegate void NewNumberTest();
-    public delegate void UpdateStateButton(int station, Impuls impulse);
+    public delegate void UpdateStateButton(int station, Impulse impulse);
     public delegate void NameCurrentTest(string info);
     public delegate void NotVisible(System.Windows.Visibility visible1, System.Windows.Visibility visible2);
     public delegate void CurrentSecondWait(string second);
@@ -219,7 +219,7 @@ namespace TESTER
         {
             try
             {
-                if (Server.ProjectTester.Station.ContainsKey(currenttest.NameStation))
+                if (Server.ProjectTester.StationsName.ContainsKey(currenttest.NameStation))
                 {
                     if (IsStart)
                     {
@@ -230,14 +230,14 @@ namespace TESTER
                             {
                                 if (script is ImpulsLabel)
                                 {
-                                    ScriptTest script_label = (script as ImpulsLabel).LabelPlay;
+                                    var script_label = (script as ImpulsLabel).LabelPlay;
                                     PlayCurrentTest(script_label);
                                 }
                                 else
                                 {
-                                    ImpulsGroup impulsgroup = script as ImpulsGroup;
+                                    var impulsgroup = script as ImpulsGroup;
                                     //активируем импульсы текущего сценария
-                                    foreach (Impuls imp in impulsgroup.Impulses)
+                                    foreach (Impulse imp in impulsgroup.Impulses)
                                     {
                                         SetImpuls(currenttest.StationNumber, imp);
                                     }
@@ -298,18 +298,17 @@ namespace TESTER
             }
         }
 
-        private void SetImpuls(int numberstation, Impuls imp)
+        private void SetImpuls(int numberstation, Impulse imp)
         {
-            if (Server.ProjectTester.CollectionStations.ContainsKey(numberstation))
+            if (Server.ProjectTester.Stations.ContainsKey(numberstation))
             {
-                foreach (var impuls in Server.ProjectTester.CollectionStations[numberstation].CollectionImpulses)
+                foreach (var impuls in Server.ProjectTester.Stations[numberstation].Impulses)
                 {
                     if (imp.Name != ScriptTest.AllImp)
                     {
                         if (impuls.Name == imp.Name)
                         {
                             impuls.State = imp.State;
-                            Server.SourceImpulsServer.Data.Stations[numberstation].TS.SetState(imp.Name, GetState(imp.State), DateTime.Now);
                             if (UpdateState != null)
                                 UpdateState(numberstation, impuls);
                             return;
@@ -318,7 +317,6 @@ namespace TESTER
                     else
                     {
                         impuls.State = imp.State;
-                        Server.SourceImpulsServer.Data.Stations[numberstation].TS.SetState(imp.Name, GetState(imp.State), DateTime.Now);
                         if (UpdateState != null)
                             UpdateState(numberstation, impuls);
                     }
@@ -326,18 +324,6 @@ namespace TESTER
             }
         }
 
-        private ImpulseState GetState(StateControl state)
-        {
-            switch (state)
-            {
-                case StateControl.activ:
-                    return ImpulseState.ActiveState;
-                case StateControl.pasiv:
-                    return ImpulseState.PassiveState;
-                default:
-                    return ImpulseState.UncontrolledState;
-            }
-        }
 
         private void CreateScripts(string[] scriptrows)
         {
@@ -382,15 +368,15 @@ namespace TESTER
                 {
                     if (!string.IsNullOrEmpty(script.NameStation))
                     {
-                        if (Server.ProjectTester.Station.ContainsKey(script.NameStation))
-                            script.StationNumber = Server.ProjectTester.Station[script.NameStation];
+                        if (Server.ProjectTester.StationsName.ContainsKey(script.NameStation))
+                            script.StationNumber = Server.ProjectTester.StationsName[script.NameStation];
                         script.NameRecord = _lastnamerecord;
                         continue;
                     }
                 }
                 //
-                if (Server.ProjectTester.Station.ContainsKey(_lastnamestation))
-                    script.StationNumber = Server.ProjectTester.Station[_lastnamestation];
+                if (Server.ProjectTester.StationsName.ContainsKey(_lastnamestation))
+                    script.StationNumber = Server.ProjectTester.StationsName[_lastnamestation];
                 script.NameStation = _lastnamestation;
                 script.NameRecord = _lastnamerecord;
             }

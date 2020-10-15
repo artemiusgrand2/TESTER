@@ -55,7 +55,8 @@
                     <CheckBox VerticalAlignment="Center" Content="Только результат поиска" FontWeight="Bold" IsChecked="{Binding  Path=IsShowFindResult, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Mode=TwoWay}" Margin="5,0,0,0" Click="IsShowOnlyResult_Click"/>
 
                     <ComboBox HorizontalAlignment="Left" VerticalAlignment="Center" Name="comboBox_all_impuls" Width="150"  SelectionChanged="comboBox_all_impuls_SelectionChanged"  Margin="5,0,0,0"  />
-                    <CheckBox Content="Автономная работа" HorizontalAlignment="Left"  Name="checkBox_work_view" FontWeight="Bold"  Height="16" VerticalAlignment="Center"  Click="checkBox_work_view_Click" Margin="5,0,0,0" />
+                    <CheckBox Content="Все станции" HorizontalAlignment="Left"  FontWeight="Bold"  Height="16" VerticalAlignment="Center" IsChecked="{Binding  Path=IsAllStationImpulses, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Mode=TwoWay}"  Margin="5,0,0,0" />
+                    <CheckBox Content="Автономная работа" HorizontalAlignment="Left"   FontWeight="Bold"  Height="16" VerticalAlignment="Center"  IsChecked="{Binding  Path=Autonomous, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Mode=TwoWay}" Margin="5,0,0,0" />
                     <CheckBox Content="Резерв" HorizontalAlignment="Left"  Name="checkBox_reserve" FontWeight="Bold"  Height="16" VerticalAlignment="Center"   Click="checkBox_reserve_Click" Margin="5,0,0,0" />
                     <CheckBox Content="Поверх окон" HorizontalAlignment="Left"  FontWeight="Bold"  Height="16" VerticalAlignment="Center"  IsChecked="{Binding  ElementName=TesterWindow, Path=Topmost}" Margin="5,0,0,0" />
 

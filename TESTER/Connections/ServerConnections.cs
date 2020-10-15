@@ -36,7 +36,7 @@ namespace TESTER.Connections
 
         #endregion
 
-        public ServerConnections(bool IsAvto, string connectionString)
+        public ServerConnections(string connectionString)
         {
             //подключение к импульс серверу
 
@@ -47,8 +47,8 @@ namespace TESTER.Connections
             }
             catch { }
             SourceImpulsServer = new ImpulsesClientTCP(config.Stations, connectionString, App.Config.AppSettings.Settings["file_impuls"].Value, interval);
-            ProjectTester = new LoadProject();
-            ProjectTester.LoadImpuls(IsAvto, this, config.Stations);
+            var dataContainerBuffer = SourceImpulsServer.Data.Clone();
+            ProjectTester = new LoadProject(this, dataContainerBuffer);
             //
             try
             {
@@ -56,7 +56,7 @@ namespace TESTER.Connections
             }
             catch { }
             //подключаем свой сервер транслятор
-            _listener = new Lister(port, SourceImpulsServer.Data);
+            _listener = new Lister(port, dataContainerBuffer);
         }
 
         public void Start()

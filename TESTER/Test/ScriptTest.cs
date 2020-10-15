@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Windows;
 using TESTER.Enums;
+using SCADA.Common.Enums;
+using SCADA.Common.ImpulsClient;
 
 namespace TESTER
 {
@@ -159,18 +161,18 @@ namespace TESTER
                                     {
                                         if ((Impulses[Impulses.Count - 1] is ImpulsGroup))
                                         {
-                                            (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls(values[1].Trim(), TypeImpuls.ts) { State = GetState(metka) });
+                                            (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impulse(values[1].Trim(), TypeImpuls.ts) { StateShort = GetState(metka) });
                                         }
                                         else
                                         {
                                             Impulses.Add(new ImpulsGroup());
-                                            (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls(values[1].Trim(), TypeImpuls.ts) { State = GetState(metka) });
+                                            (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impulse(values[1].Trim(), TypeImpuls.ts) { StateShort = GetState(metka) });
                                         }
                                     }
                                     else
                                     {
                                         Impulses.Add(new ImpulsGroup());
-                                        (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls(values[1].Trim(), TypeImpuls.ts) {State = GetState(metka) });
+                                        (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impulse(values[1].Trim(), TypeImpuls.ts) { StateShort = GetState(metka) });
                                     }
                                 }
                             }
@@ -189,8 +191,8 @@ namespace TESTER
                                 {
                                     if ((Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Count > 0)
                                     {
-                                        StateControl state = (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses[(Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Count - 1].State;
-                                        (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impuls(values[0].Trim(), TypeImpuls.ts) {State = state });
+                                        var state = (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses[(Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Count - 1].State;
+                                        (Impulses[Impulses.Count - 1] as ImpulsGroup).Impulses.Add(new Impulse(values[0].Trim(), TypeImpuls.ts) {State = state });
                                     }
                                 }
                             }
@@ -235,25 +237,25 @@ namespace TESTER
             }
         }
 
-        private StateControl GetState(string impuls_value)
+        private StatesControl GetState(string impuls_value)
         {
             if (impuls_value != null)
             {
                 switch (impuls_value)
                 {
                     case ViewControl.activ:
-                        return StateControl.activ;
+                        return StatesControl.activ;
                     case ViewControl.pasiv:
-                        return StateControl.pasiv;
+                        return StatesControl.pasiv;
                     case ViewControl.notcontrol:
-                        return StateControl.notconrol;
+                        return StatesControl.nocontrol;
                     default:
-                        return StateControl.notconrol;
+                        return StatesControl.nocontrol;
                 }
             }
             else
             {
-                return StateControl.notconrol;
+                return StatesControl.nocontrol;
             }
         }
     }

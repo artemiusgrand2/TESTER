@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using TESTER.Enums;
+using SCADA.Common.Enums;
+using SCADA.Common.ImpulsClient;
 
 namespace TESTER.Models
 {
@@ -12,6 +12,8 @@ namespace TESTER.Models
         public  WrapPanel Panel { get; private set; }
 
         public int CurrentStation { get; set; } = -1;
+
+        public StatesControl CommonState { get; set; }
 
         public bool IsShow { get; set; }
 
@@ -42,7 +44,7 @@ namespace TESTER.Models
         }
 
 
-        public void SetVisiblity(Impuls impuls, Visibility visibility)
+        public void SetVisiblity(Impulse impuls, Visibility visibility)
         {
             if (Collectionbuttons.ContainsKey(impuls.Name))
             {
