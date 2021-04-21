@@ -50,7 +50,7 @@
                 <WrapPanel  HorizontalAlignment="Left"   Background="Silver">
 
                     <!--Поиск-->
-                    <TextBox Height="25" HorizontalAlignment="Left"   Name="textBox_name_impuls" Text="{Binding  Path=Filter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Mode=OneWayToSource}"  VerticalAlignment="Center" Width="150" FontWeight="Bold" TextChanged="textBox_name_impuls_TextChanged" FontSize="14" Margin="5,0,0,0" HorizontalContentAlignment="Center"   VerticalContentAlignment="Center" />
+                    <TextBox Height="25" HorizontalAlignment="Left"   Name="textBox_name_impuls" Text="{Binding  Path=Filter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center" Width="150" FontWeight="Bold" TextChanged="textBox_name_impuls_TextChanged" FontSize="14" Margin="5,0,0,0" HorizontalContentAlignment="Center"   VerticalContentAlignment="Center" />
                     <TextBlock Name="CountFindElement" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     <CheckBox VerticalAlignment="Center" Content="Только результат поиска" FontWeight="Bold" IsChecked="{Binding  Path=IsShowFindResult, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Mode=TwoWay}" Margin="5,0,0,0" Click="IsShowOnlyResult_Click"/>
 
@@ -238,7 +238,7 @@
         </Grid>
         
         <StatusBar Grid.Row="2" Height="25" Grid.ColumnSpan="2"  Name="statusBar_test" VerticalAlignment="Bottom" Background="{StaticResource SelectedBackgroundBrush}"  >
-            <StatusBarItem  Name="info_status_test" BorderBrush="Brown" FontWeight="Bold"  HorizontalContentAlignment="Right" BorderThickness="2"/>
+            <StatusBarItem  Name="info_status_test"  BorderBrush="Brown" FontWeight="Bold"  HorizontalContentAlignment="Right" BorderThickness="2"/>
         </StatusBar>
     </Grid>
 </Window>

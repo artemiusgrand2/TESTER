@@ -1,0 +1,17 @@
+D:\Distributiv\TESTER\TESTER\bin\Release\TESTER.exe.config
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.csprojResolveAssemblyReference.cache
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\BureauBlack.baml
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\BureauBlue.baml
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\ExpressionDark.baml
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\ShinyBlue.baml
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\ShinyRed.baml
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\WhistlerBlue.baml
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\WpfForm\MessageForm.baml
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\App.baml
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\Controls\TableTs.g.cs
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\MainWindow.g.cs
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\WpfForm\MessageForm.g.cs
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\App.g.cs
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\GeneratedInternalTypeHelper.g.cs
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER_MarkupCompile.cache
+D:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER_MarkupCompile.lref

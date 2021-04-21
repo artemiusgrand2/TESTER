@@ -832,7 +832,7 @@ namespace TESTER
             //
             if (name.Length > 0)
                 CountFindElement.Text = last_select.Count.ToString();
-            textBox_name_impuls.Focus();
+           // textBox_name_impuls.Focus();
            
         }
 
