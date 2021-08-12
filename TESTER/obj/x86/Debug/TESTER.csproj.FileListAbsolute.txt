@@ -77,4 +77,7 @@ D:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.pdb
 d:\Distributiv\TESTER\TESTER\bin\Debug\TESTER.exe.config
 D:\Distributiv\TESTER\TESTER\bin\Debug\SCADA.Common.dll
 D:\Distributiv\TESTER\TESTER\bin\Debug\SCADA.Common.pdb
-d:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.csprojResolveAssemblyReference.cache
+d:\Distributiv\TESTER\TESTER\bin\Debug\log4net.dll
+d:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.csprojAssemblyReference.cache
+d:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.csproj.CoreCompileInputs.cache
+d:\Distributiv\TESTER\TESTER\obj\x86\Debug\TESTER.csproj.CopyComplete

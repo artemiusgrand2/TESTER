@@ -1,5 +1,4 @@
 D:\Distributiv\TESTER\TESTER\bin\Release\TESTER.exe.config
-D:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.csprojResolveAssemblyReference.cache
 D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\BureauBlack.baml
 D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\BureauBlue.baml
 D:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\ExpressionDark.baml
@@ -15,3 +14,19 @@ D:\Distributiv\TESTER\TESTER\obj\x86\Release\App.g.cs
 D:\Distributiv\TESTER\TESTER\obj\x86\Release\GeneratedInternalTypeHelper.g.cs
 D:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER_MarkupCompile.cache
 D:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER_MarkupCompile.lref
+d:\Distributiv\TESTER\TESTER\bin\Release\TESTER.exe
+d:\Distributiv\TESTER\TESTER\bin\Release\TESTER.pdb
+d:\Distributiv\TESTER\TESTER\bin\Release\log4net.dll
+d:\Distributiv\TESTER\TESTER\bin\Release\SCADA.Common.dll
+d:\Distributiv\TESTER\TESTER\bin\Release\SCADA.Common.pdb
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.csprojAssemblyReference.cache
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\Controls\TableTs.baml
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\MainWindow.baml
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\Themes\ExpressionLight.baml
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.g.resources
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.Properties.Resources.resources
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.csproj.GenerateResource.cache
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.csproj.CoreCompileInputs.cache
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.csproj.CopyComplete
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.exe
+d:\Distributiv\TESTER\TESTER\obj\x86\Release\TESTER.pdb

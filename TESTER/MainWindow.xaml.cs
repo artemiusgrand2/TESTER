@@ -169,6 +169,14 @@ namespace TESTER
             }
         }
 
+        public string Filter
+        {
+            get
+            {
+                return App.Filter;
+            }
+        }
+
         bool _autonomous = false;
 
         public bool Autonomous
@@ -207,6 +215,9 @@ namespace TESTER
 
 
         bool IsRunShowFindResult = false;
+
+
+
 
         #endregion 
 
@@ -259,7 +270,6 @@ namespace TESTER
                 //_hook.KeyDown += new System.Windows.Forms.KeyEventHandler(MyKeyDown);
                 //
                 IsDifferences = App.IsDifferences;
-                textBox_name_impuls.Text = App.Filter;
                 if (!string.IsNullOrEmpty(App.Filter))
                     IsShowFindResult = true;
                 //
@@ -287,7 +297,8 @@ namespace TESTER
                         {
                             case 0:
                                 {
-                                    selectStation1.SelectedIndex = Table.IndexOf(Table.Where(x => x.Station == station).FirstOrDefault());
+                                    selectStation1.SelectedIndex = Table.IndexOf(Table.Where(x => x.Station == station).FirstOrDefault()); 
+                                    
                                 }
                                 break;
                             case 1:
@@ -803,8 +814,8 @@ namespace TESTER
         private void FindImpuls(string name)
         {
             ClearLastSelect(IsShowFindResult);
-            if (!string.IsNullOrEmpty(name))
-            {
+            //if (!string.IsNullOrEmpty(name))
+            //{
                 try
                 {
                     foreach (var impuls in _panels.SelectMany(x => x.Collectionbuttons))
@@ -828,7 +839,7 @@ namespace TESTER
                 //
                 if (last_select.Count == 0)
                     textBox_name_impuls.Foreground = Brushes.Red;
-            }
+            //}
             //
             if (name.Length > 0)
                 CountFindElement.Text = last_select.Count.ToString();
