@@ -20,7 +20,7 @@ namespace TESTER
 
         public static string Filter { get; private set; } = string.Empty;
 
-        public static bool Topmost { get; private set; } = false;
+        public static bool Topmost { get;  set; } = false;
 
         public static Configuration Config;
 

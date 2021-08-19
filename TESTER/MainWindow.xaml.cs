@@ -270,7 +270,6 @@ namespace TESTER
                 //_hook.KeyDown += new System.Windows.Forms.KeyEventHandler(MyKeyDown);
                 //
                 IsDifferences = App.IsDifferences;
-                Topmost = App.Topmost;
                 if (!string.IsNullOrEmpty(App.Filter))
                     IsShowFindResult = true;
                 //
@@ -1372,6 +1371,18 @@ namespace TESTER
         {
             SetNameColorServer(!checkBox_reserve.IsChecked.Value);
             server.SourceImpulsServer.ReConnect((!checkBox_reserve.IsChecked.Value) ? App.Config.AppSettings.Settings["server1"].Value : App.Config.AppSettings.Settings["server2"].Value);
+        }
+
+
+        private void TesterWindow_Deactivated(object sender, EventArgs e)
+        {
+            if (!App.Topmost)
+                Topmost = false;
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            App.Topmost = true;
         }
     }
 }
