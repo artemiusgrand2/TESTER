@@ -20,6 +20,8 @@ namespace TESTER
 
         public static string Filter { get; private set; } = string.Empty;
 
+        public static bool Topmost { get; private set; } = false;
+
         public static Configuration Config;
 
         public static bool IsServer1 { get; private set; } = true;
@@ -54,6 +56,12 @@ namespace TESTER
                     if (arg.IndexOf("-s2") != -1)
                     {
                         IsServer1 = false;
+                        continue;
+                    }
+
+                    if (arg.IndexOf("-tm") != -1)
+                    {
+                        Topmost = true;
                         continue;
                     }
 

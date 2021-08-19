@@ -270,6 +270,7 @@ namespace TESTER
                 //_hook.KeyDown += new System.Windows.Forms.KeyEventHandler(MyKeyDown);
                 //
                 IsDifferences = App.IsDifferences;
+                Topmost = App.Topmost;
                 if (!string.IsNullOrEmpty(App.Filter))
                     IsShowFindResult = true;
                 //
