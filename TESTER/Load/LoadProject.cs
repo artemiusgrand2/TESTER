@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Configuration;
 using System.IO;
 using System.Windows;
 using SCADA.Common.ImpulsClient;
+using SCADA.Common.Enums;
 using TESTER.Enums;
 using TESTER.Constants;
 using TESTER.Connections;
@@ -25,7 +27,7 @@ namespace TESTER
         /// <summary>
         /// сценарий тестирования участка
         /// </summary>
-        public  FileScript TestFile { get { return _test; } }
+        public FileScript TestFile { get { return _test; } }
         /// <summary>
         /// коллекция станций 
         /// </summary>
@@ -38,6 +40,8 @@ namespace TESTER
         }
         //
         DataContainer _dataContainer;
+
+        public event UpdateStateImpulsEventHandler UpdateStateImpuls;
         #endregion
 
         public LoadProject(ServerConnections server, DataContainer dataContainer)
@@ -45,12 +49,23 @@ namespace TESTER
             _test.Server = server;
             _dataContainer = dataContainer;
             StationsName = new Dictionary<string, int>();
-            foreach(var station in _dataContainer.Stations)
+            foreach (var station in _dataContainer.Stations)
             {
                 if (!StationsName.ContainsKey(station.Value.Name))
                     StationsName.Add(station.Value.Name, station.Key);
+                foreach (var imp in station.Value.Impulses)
+                {
+                    imp.UpdateStateImpuls += Imp_UpdateStateImpuls;
+                }
             }
         }
+
+        private void Imp_UpdateStateImpuls(int stationNumber, string nameImpuls, TypeImpuls type, StatesControl newState)
+        {
+            if (UpdateStateImpuls != null)
+                UpdateStateImpuls(stationNumber, nameImpuls, type, newState);
+        }
+
 
         /// <summary>
         /// загружаем сценарии тестирования
@@ -69,6 +84,6 @@ namespace TESTER
             }
             catch (Exception error) { MessageBox.Show(error.Message); }
         }
-
     }
 }
+

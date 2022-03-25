@@ -257,6 +257,7 @@ namespace TESTER
                     checkBox_reserve.IsEnabled = false;
                 server = new ServerConnections((!checkBox_reserve.IsChecked.Value) ? App.Config.AppSettings.Settings["server1"].Value : App.Config.AppSettings.Settings["server2"].Value);
                 FullStations(server.ProjectTester.StationsName);
+                server.ProjectTester.UpdateStateImpuls += ProjectTester_UpdateStateImpulsFromBuffer;
                 server.Start();
                 //
                 TableTest.ItemsSource = server.ProjectTester.TestFile.Scripts;
@@ -322,6 +323,47 @@ namespace TESTER
                 }
             }
             catch (Exception error) { MessageBox.Show(error.Message); /*_hook.Stop();*/ }
+        }
+
+        private void ProjectTester_UpdateStateImpulsFromBuffer(int stationNumber, string nameImpuls, TypeImpuls type, StatesControl newState)
+        {
+            Dispatcher.Invoke(new Action(() => UpdateStateImpulsFromBuffer(stationNumber, nameImpuls, type, newState)));
+        }
+
+        private void UpdateStateImpulsFromBuffer(int stationNumber, string nameImpuls, TypeImpuls type, StatesControl newState)
+        {
+            if (Autonomous)
+            {
+                foreach (var modelPanel in _panels)
+                {
+                    modelPanel.Collectionbuttons.SelectMany(x => x.Value.SelectMany(y => y.Value)).ToList().ForEach(x =>
+                    {
+                        x.BorderBrush = Brushes.Brown;
+                        x.BorderThickness = new Thickness(1);
+                    });
+                    //
+                    if (modelPanel.CurrentStation == stationNumber && modelPanel.Collectionbuttons.ContainsKey(nameImpuls))
+                    {
+                        if (modelPanel.Collectionbuttons[nameImpuls].ContainsKey(type))
+                        {
+                            SetState(newState, modelPanel.Collectionbuttons[nameImpuls][type]);
+                            modelPanel.Collectionbuttons[nameImpuls][type].ToList().ForEach(y =>
+                            {
+                                y.BorderBrush = Brushes.DarkBlue;
+                                y.BorderThickness = new Thickness(3);
+                            });
+                        }
+                    }
+                }
+                //
+                FindDifferences();
+                if (!IsRunShowFindResult && IsShowFindResult)
+                {
+                    if (IsShowFindResult)
+                        IsShowOnlyFunction();
+                    IsRunShowFindResult = !IsRunShowFindResult;
+                }
+            }
         }
 
         private void MyKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)     
@@ -482,12 +524,12 @@ namespace TESTER
                                             }
                                         }
                                     });
-                                } 
+                                }
                             }
                             //
-                            if(impulsesUpdates.Count > 0)
+                            if (impulsesUpdates.Count > 0)
                             {
-                                foreach (var impuls in value.Value.TS.Impulses.Where(x=>!impulsesUpdates.Contains(x)))
+                                foreach (var impuls in value.Value.TS.Impulses.Where(x => !impulsesUpdates.Contains(x)))
                                 {
                                     findModel.ForEach(x =>
                                     {
@@ -507,18 +549,19 @@ namespace TESTER
                             }
                         }
                     }
+
+                    //
+                    FindDifferences();
+                    if (!IsRunShowFindResult && IsShowFindResult)
+                    {
+                        if (IsShowFindResult)
+                            IsShowOnlyFunction();
+                        IsRunShowFindResult = !IsRunShowFindResult;
+                    }
+                    //
+                    FullStations(server.ProjectTester.StationsName);
+                    ShowInfoImpuls();
                 }
-                //
-                FindDifferences();
-                if (!IsRunShowFindResult && IsShowFindResult)
-                {
-                    if (IsShowFindResult)
-                        IsShowOnlyFunction();
-                    IsRunShowFindResult = !IsRunShowFindResult;
-                }
-                //
-                FullStations(server.ProjectTester.StationsName);
-                ShowInfoImpuls();
             }
             catch { }
         }
@@ -971,8 +1014,6 @@ namespace TESTER
                         });
                     }
                 }
-                var delta = DateTime.Now - starr;
-                var d = 0;
                 //
                // stationsModel.ForEach(x => x.Panel.UpdateLayout());
             }
