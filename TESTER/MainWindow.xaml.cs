@@ -191,6 +191,7 @@ namespace TESTER
                 if (value != _autonomous)
                 {
                     _autonomous = value;
+                    SCADA.Common.Log.Logger.LogCommon.Info(_autonomous ? "Установлен автономный режим работы" : "Сброшен автономный режим работы");
                     string answer = string.Empty;
                     if (_autonomous)
                         TypeWork = TypeWork.autonomy;
