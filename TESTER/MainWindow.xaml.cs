@@ -233,8 +233,12 @@ namespace TESTER
         {
             try
             {
-                //panelTS.RenderTransform = scaletransform;
-                panelTU.RenderTransform = scaletransform;
+                panel1.RenderTransform = new ScaleTransform(1, 1);
+                panel2.RenderTransform = new ScaleTransform(1, 1);
+                panel3.RenderTransform = new ScaleTransform(1, 1);
+                panel4.RenderTransform = new ScaleTransform(1, 1);
+                panelTU.RenderTransform = new ScaleTransform(1, 1);
+                //
                 TypeWork = TypeWork.fromServer;
                 _timer_mig = new System.Timers.Timer(500);
                 _timer_mig.Elapsed += timer_mig_tick;
@@ -1240,10 +1244,13 @@ namespace TESTER
         /// масштабируем все объекты
         /// </summary>
         /// <param name="scale_factor"></param>
-        public void ModelScaleWheel(double scale_factor)
+        public void ModelScaleWheel(object element, double scale_factor)
         {
-            scaletransform.ScaleX *= scale_factor;
-            scaletransform.ScaleY *= scale_factor;
+            if (element is UIElement)
+            {
+                ((element as UIElement).RenderTransform as ScaleTransform).ScaleX *= scale_factor;
+                ((element as UIElement).RenderTransform as ScaleTransform).ScaleY *= scale_factor;
+            };
         }
 
         private void enter_test_Click(object sender, RoutedEventArgs e)
@@ -1304,11 +1311,11 @@ namespace TESTER
             {
                 if (e.Delta > 0)
                 {
-                    ModelScaleWheel(scrollplus);
+                    ModelScaleWheel(sender, scrollplus);
                 }
                 else
                 {
-                    ModelScaleWheel(scrollminus);
+                    ModelScaleWheel(sender, scrollminus);
                 }
             }
         }
@@ -1319,8 +1326,11 @@ namespace TESTER
             {
                 case Key.Escape:
                     {
-                        scaletransform.ScaleX = 1;
-                        scaletransform.ScaleY = 1;
+                        if (sender is UIElement)
+                        {
+                            ((sender as UIElement).RenderTransform as ScaleTransform).ScaleX = 1;
+                            ((sender as UIElement).RenderTransform as ScaleTransform).ScaleY = 1;
+                        };
                     }
                     break;
                 //case Key.Up:
