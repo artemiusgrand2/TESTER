@@ -1078,17 +1078,20 @@ namespace TESTER
             var selectButton = (Button)sender;
             if (selectButton != null)
             {
-                string name = selectButton.Content.ToString();
+                var nameImp = selectButton.Content.ToString().Replace("__", "_");
                 if(tabImpulses.SelectedIndex == 0)
                 {
-                    var station = _panels.Where(x => x.IsFindButton(selectButton)).FirstOrDefault().CurrentStation;
+                    var panel = _panels.Where(x => x.IsFindButton(nameImp, selectButton)).FirstOrDefault();
+                    if (panel == null)
+                        return;
+                    var station = panel.CurrentStation;
                     if (!IsShowFindResult)
                         ClearLastSelect(IsShowFindResult);
                     if (_autonomous)
                     {
                         foreach (var impuls in server.ProjectTester.Stations[station].TS.Impulses)
                         {
-                            if (impuls.Name == name)
+                            if (impuls.Name == nameImp)
                             {
                                 switch (impuls.StateShort)
                                 {
@@ -1120,7 +1123,7 @@ namespace TESTER
                 }
                 else if (tabImpulses.SelectedIndex == 1)
                 {
-                    server.SourceImpulsServer.SendImpulse(name, lastSelectStation, ImpulseState.Execute);
+                    server.SourceImpulsServer.SendImpulse(nameImp, lastSelectStation, ImpulseState.Execute);
                 }
             }
         }

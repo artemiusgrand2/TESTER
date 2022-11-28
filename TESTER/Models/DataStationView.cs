@@ -28,14 +28,13 @@ namespace TESTER.Models
         }
 
 
-        public bool IsFindButton(Button button)
+        public bool IsFindButton(string nameImp, Button button)
         {
-            var name = button.Content.ToString();
-            if (Collectionbuttons.ContainsKey(name))
+            if (Collectionbuttons.ContainsKey(nameImp))
             {
-                if (Collectionbuttons[name].ContainsKey(TypeImpuls.ts))
+                if (Collectionbuttons[nameImp].ContainsKey(TypeImpuls.ts))
                 {
-                    if (Collectionbuttons[name][TypeImpuls.ts].Contains(button))
+                    if (Collectionbuttons[nameImp][TypeImpuls.ts].Contains(button))
                         return true;
                 }
             }
